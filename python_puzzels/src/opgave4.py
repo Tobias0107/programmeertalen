@@ -153,3 +153,4 @@ class Time:
         hour = self.hours - other.hours
         minute = self.minutes - other.minutes
         second = self.seconds - other.seconds
+        return Time((hour % HOURS_IN_DAY), minute, second)
