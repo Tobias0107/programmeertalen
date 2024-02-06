@@ -12,8 +12,10 @@ class Time:
         """
         while seconds < 0:
             seconds += SECONDS_IN_MINUTE
+            minutes -= 1
         while minutes < 0:
             minutes += MINUTES_IN_HOUR
+            hours -= 1
         while hours < 0:
             hours += HOURS_IN_DAY
         while seconds >= SECONDS_IN_MINUTE:
@@ -91,8 +93,10 @@ class Time:
         """
         while seconds < 0:
             seconds += SECONDS_IN_MINUTE
+            minutes -= 1
         while minutes < 0:
             minutes += MINUTES_IN_HOUR
+            hours -= 1
         while hours < 0:
             hours += HOURS_IN_DAY
         while seconds >= SECONDS_IN_MINUTE:
