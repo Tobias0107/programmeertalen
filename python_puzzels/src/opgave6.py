@@ -6,7 +6,7 @@ class Event:
         'description' of type str.
         >>> event = Event(Time(18, 30, 0), "dinner")
         """
-        self.time = time
+        self.time = str(time)
         self.description = description
 
     def __repr__(self):
