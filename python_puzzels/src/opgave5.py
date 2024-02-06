@@ -157,10 +157,12 @@ class Time:
         second = self.seconds - other.seconds
         return Time((hour % HOURS_IN_DAY), minute, second)
 
+
 def get_current_hours_minutes_seconds():
     """ Returns the current (hours, minutes, seconds) as a tuple. """
     t = time.localtime()
     return (t.tm_hour, t.tm_min, t.tm_sec)
+
 
 def now():
     """ Returns the current time as Time object. """
