@@ -36,7 +36,7 @@ class Time:
         >>> print( Time(8,5,30) )
         08:05:30
         """
-        hour = self.hours
+        hour = str(self.hours)
         if self.hours < 10:
             hour = "0" + str(self.hours)
         minutes = str(self.minutes)
