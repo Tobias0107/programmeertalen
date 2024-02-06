@@ -172,5 +172,6 @@ def now():
 def main():
     print(now())
 
+
 if __name__ == "__main__":
     main()
