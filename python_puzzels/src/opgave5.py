@@ -167,3 +167,10 @@ def get_current_hours_minutes_seconds():
 def now():
     """ Returns the current time as Time object. """
     return Time(*get_current_hours_minutes_seconds())
+
+
+def main():
+    print(now())
+
+if __name__ == "__main__":
+    main()
