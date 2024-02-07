@@ -209,6 +209,7 @@ class Event:
         """
         return self.description
 
+
 class AlarmClock:
     """ Represents an alarm clock that can handle events. """
 
@@ -219,7 +220,8 @@ class AlarmClock:
         self.eventlist = []
 
     def add_event(self, event):
-        """ Adds an 'event' to this AlarmClock object, it doesn't return anything.
+        """ Adds an 'event' to this AlarmClock object, it doesn't return
+        anything.
         >>> alarm_clock = AlarmClock()
         >>> event = Event(Time(18, 30, 0), "dinner")
         >>> alarm_clock.add_event(event)
@@ -243,4 +245,3 @@ class AlarmClock:
         for i in self.eventlist:
             string = string + str(i)
         return string
-
