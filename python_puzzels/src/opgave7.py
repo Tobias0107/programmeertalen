@@ -224,9 +224,10 @@ class AlarmClock:
         >>> event = Event(Time(18, 30, 0), "dinner")
         >>> alarm_clock.add_event(event)
         """
+        self.eventlist.append(str(event))
 
     def __repr__(self):
-        """ Returns a string representation of the AlarmClock object. 
+        """ Returns a string representation of the AlarmClock object.
         >>> alarm_clock = AlarmClock()
         >>> event = Event(Time(18, 30, 0), "dinner")
         >>> alarm_clock.add_event(event)
@@ -238,4 +239,8 @@ class AlarmClock:
         >>> "breakfast" in s
         False
         """
+        string = ""
+        for i in self.eventlist:
+            string = string + str(i)
+        return string
 
