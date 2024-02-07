@@ -211,10 +211,10 @@ class Event:
 
 
 def key(event):
-        hours = Time(Event(event).get_time).get_hours
-        minutes = Time(Event(event).get_time).get_minutes
-        seconds = Time(Event(event).get_time).get_seconds
-        seconds += hours * 3600 + minutes * 60
+    hours = Time(Event(event).get_time).get_hours
+    minutes = Time(Event(event).get_time).get_minutes
+    seconds = Time(Event(event).get_time).get_seconds
+    seconds += hours * 3600 + minutes * 60
 
 
 class AlarmClock:
