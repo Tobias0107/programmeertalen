@@ -170,7 +170,7 @@ def now():
 
 
 def main():
-    print(now())
+    print(Time(18, 20, 7).get_total_seconds())
 
 
 if __name__ == "__main__":
@@ -185,7 +185,7 @@ class Event:
         'description' of type str.
         >>> event = Event(Time(18, 30, 0), "dinner")
         """
-        self.time = str(time)
+        self.time = time
         self.description = description
 
     def __repr__(self):
@@ -193,7 +193,7 @@ class Event:
         >>> print( Event(Time(18, 30, 0), "dinner") )
         18:30:00 dinner
         """
-        return self.time + " " + self.description
+        return str(self.time) + " " + self.description
 
     def get_time(self):
         """ Returns the time of an Event object.
@@ -208,13 +208,6 @@ class Event:
         dinner
         """
         return self.description
-
-
-def key(event):
-    hours = Time(Event(event).get_time).get_hours
-    minutes = Time(Event(event).get_time).get_minutes
-    seconds = Time(Event(event).get_time).get_seconds
-    seconds += hours * 3600 + minutes * 60
 
 
 class AlarmClock:
@@ -233,7 +226,8 @@ class AlarmClock:
         >>> event = Event(Time(18, 30, 0), "dinner")
         >>> alarm_clock.add_event(event)
         """
-        self.eventlist.append(str(event))
+        self.eventlist.append(event)
+        self.sort()
 
     def __repr__(self):
         """ Returns a string representation of the AlarmClock object.
@@ -274,5 +268,4 @@ class AlarmClock:
         >>> s.find("event1") < s.find("event2")
         True
         """
-        sorted_list = sorted(self.eventlist, key=key())
-        self.eventlist = sorted_list
+        self.eventlist.sort(key=lambda x: x.get_time().get_total_seconds())
