@@ -288,13 +288,13 @@ class AlarmClock:
         """
         return self.eventlist.pop(0)
 
-    def wait_for_and_handle_events(self):
+    def wait_for_and_handle_events(self, event_handler_function):
         """ Wait for each event to pass and then print the event. """
         while len(self.eventlist) > 0:
             event = self.eventlist[0]
             seconds = (event.get_time() - now()).get_total_seconds()
             time.sleep(seconds)
-            text_to_speech(event.get_description())
+            event_handler_function(event.get_description())
             self.eventlist.pop(0)
 
 
@@ -313,7 +313,7 @@ def main():
 
     # alarm_clock.add_event(Event(Time(1, 1, 1), "event1"))
     # alarm_clock.add_event(Event(Time(3, 3, 3), "event3"))
-    alarm_clock.wait_for_and_handle_events()
+    alarm_clock.wait_for_and_handle_events(print)
 
 
 if __name__ == "__main__":
