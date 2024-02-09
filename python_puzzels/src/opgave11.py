@@ -1,4 +1,5 @@
 import time
+import math
 from gtts import gTTS
 import playsound
 
@@ -29,46 +30,48 @@ class Time:
             minutes -= MINUTES_IN_HOUR
             hours += 1
 
-        self.hours = hours
-        self.minutes = minutes
-        self.seconds = seconds % SECONDS_IN_MINUTE
+        # self.hours = hours
+        # self.minutes = minutes
+        # self.seconds = seconds % SECONDS_IN_MINUTE
+        self.time = hours * 10000 + minutes * 100 + seconds
 
     def __repr__(self):
         """ Returns the string representation of a Time object.
         >>> print( Time(8,5,30) )
         08:05:30
         """
-        hour = str(self.hours)
-        if self.hours < 10:
-            hour = "0" + str(self.hours)
-        minutes = str(self.minutes)
-        if self.minutes < 10:
-            minutes = "0" + str(self.minutes)
-        seconds = str(self.seconds)
-        if self.seconds < 10:
-            seconds = "0" + str(self.seconds)
-        return f"{hour}:{minutes}:{seconds}"
+        # hour = str(self.time)
+        # if self.hours < 10:
+        #     hour = "0" + str(self.hours)
+        # minutes = str(self.minutes)
+        # if self.minutes < 10:
+        #     minutes = "0" + str(self.minutes)
+        # seconds = str(self.seconds)
+        # if self.seconds < 10:
+        #     seconds = "0" + str(self.seconds)
+        return f"{self.get_hours():02}:\
+            {self.get_minutes():02}:{self.get_seconds():02}"
 
     def get_hours(self):
         """ Returns the hours of the Time object.
         >>> Time(23,0,0).get_hours()
         23
         """
-        return self.hours
+        return self.time // 10000
 
     def get_minutes(self):
         """ Returns the minutes of the Time object.
         >>> Time(0,59,0).get_minutes()
         59
         """
-        return self.minutes
+        return (self.time % 10000) // 100
 
     def get_seconds(self):
         """ Returns the seconds of the Time object.
         >>> Time(0,0,59).get_seconds()
         59
         """
-        return self.seconds
+        return self.time % 100
 
     def set_time(self, hours, minutes, seconds):
         """ Sets the time of the Time object to 'hours', 'minutes',
@@ -110,9 +113,10 @@ class Time:
             minutes -= MINUTES_IN_HOUR
             hours += 1
 
-        self.hours = hours
-        self.minutes = minutes
-        self.seconds = seconds % SECONDS_IN_MINUTE
+        # self.hours = hours
+        # self.minutes = minutes
+        # self.seconds = seconds % SECONDS_IN_MINUTE
+        self.time = hours * 10000 + minutes * 100 + seconds
 
     def get_total_seconds(self):
         """ Returns the number of seconds since time 00:00:00.
@@ -125,7 +129,8 @@ class Time:
         >>> Time(13,30,5).get_total_seconds()
         48605
         """
-        return (self.hours * 3600 + self.minutes * 60 + self.seconds)
+        return (self.get_hours() * 3600 + self.get_minutes()
+                * 60 + self.get_seconds())
 
     def __add__(self, other):
         """ Returns a valid Time objects which is Time objects
@@ -135,15 +140,15 @@ class Time:
         >>> print(Time(13,30,0) + Time(1,46,-45))
         15:15:15
         """
-        hour = self.hours + other.hours
-        minute = self.minutes + other.minutes
-        second = self.seconds + other.seconds
-        # while second > SECONDS_IN_MINUTE:
-        #     second -= SECONDS_IN_MINUTE
-        #     minute += 1
-        # while minute > MINUTES_IN_HOUR:
-        #     minute -= MINUTES_IN_HOUR
-        #     hour += 1
+        hour = self.get_hours() + other.get_hours()
+        minute = self.get_minutes() + other.get_minutes()
+        second = self.get_seconds() + other.get_seconds()
+        while second > SECONDS_IN_MINUTE:
+            second -= SECONDS_IN_MINUTE
+            minute += 1
+        while minute > MINUTES_IN_HOUR:
+            minute -= MINUTES_IN_HOUR
+            hour += 1
         return Time((hour % HOURS_IN_DAY), minute, second)
 
     def __sub__(self, other):
@@ -154,9 +159,9 @@ class Time:
         >>> print(Time(10,0,0) - Time(1,50,600))
         08:00:00
         """
-        hour = self.hours - other.hours
-        minute = self.minutes - other.minutes
-        second = self.seconds - other.seconds
+        hour = self.get_hours() - other.get_hours()
+        minute = self.get_minutes() - other.get_minutes()
+        second = self.get_seconds() - other.get_seconds()
         return Time((hour % HOURS_IN_DAY), minute, second)
 
 
