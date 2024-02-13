@@ -69,7 +69,7 @@ class Items:
         self.itemlist = []
 
     def __repr__(self):
-        string = f"points:{self.get_points()}"
+        string = ""
         for item in self.itemlist:
             string += (str(item.get_name()) + "\n")
         return string
@@ -101,14 +101,24 @@ class Knapsack:
         self.max_volume = max_volume
 
     def add_items(self, Items):
+    # Items should be a list with items of the class items
         self.items = Items
 
     def get_points(self):
     # The self.items is only initialised if the items are added by the add items
         try:
-            return self.items.get_points
+            return self.items.get_points()
         except:
             return 0
+
+    def save(self, solution_file):
+        with open(solution_file + ".svg", mode="a") as solutions_file:
+            try:
+                points_str = f"points: {self.get_points()}"
+                solutions_file.write(points_str)
+                solutions_file.writelines(self.items)
+            except:
+                solutions_file.write("No solution in knapsack yet")
 
 
 def load_knapsack(knapsack_file):
