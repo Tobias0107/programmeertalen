@@ -20,6 +20,9 @@ class Recources:
         (points, weight, volume) = self.recources
         return volume
 
+    def get_points_weight_volume(self):
+        return self.recources
+
     def add_volume(self, added_volume):
         (points, weight, volume) = self.recources
         volume += added_volume
@@ -53,18 +56,43 @@ class Item:
     def get_volume(self):
         return self.recources.get_volume()
 
+    def get_name(self):
+        return self.name
+
     def get_points_weight_volume(self):
-        return self.recources
+        return self.recources.get_points_weight_volume()
 
 
 class Items:
     def __init__(self):
+        self.total_recources = Recources(0, 0, 0)
         self.itemlist = []
 
+    def __repr__(self):
+        string = f"points:{self.get_points()}"
+        for item in self.itemlist:
+            string += (str(item.get_name()) + "\n")
+        return string
+
     def add_item(self, item):
+        (points, weight, volume) = self.total_recources
+        points += item.get_points()
+        weight += item.get_weight()
+        volume += item.get_volume()
+        self.total_recources = Recources(points, weight, volume)
         self.itemlist.append(item)
 
-    def 
+    def get_points(self):
+        return self.total_recources.get_points()
+
+    def get_weight(self):
+        return self.total_recources.get_weight()
+
+    def get_volume(self):
+        return self.total_recources.get_volume()
+
+    def get_points_weight_volume(self):
+        return self.total_recources.get_points_weight_volume()
 
 
 def load_knapsack(knapsack_file):
