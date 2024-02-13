@@ -74,6 +74,9 @@ class Items:
             string += (str(item.get_name()) + "\n")
         return string
 
+    def __gt__(self, other):
+        
+
     def add_item(self, item):
         (points, weight, volume) = self.total_recources
         points += item.get_points()
@@ -93,6 +96,9 @@ class Items:
 
     def get_points_weight_volume(self):
         return self.total_recources.get_points_weight_volume()
+
+    def get_itemlist(self):
+        return self.itemlist
 
 
 class Knapsack:
@@ -132,6 +138,43 @@ def load_knapsack(knapsack_file):
                 Item = Item(row["name"], row["points"], row["weight"], row["volume"])
                 All_items.add_item(Item)
     return (init_Knapsack, All_items)
+
+
+class Solver_Random:
+    def __init__(self, number_of_tries):
+        self.number_of_tries = number_of_tries
+
+    def solve(self, knapsack, All_items):
+        Item_combination_try = Items()
+        Item_combination_best = Items()
+        for _ in range(self.number_of_tries):
+            for item in All_items.get_itemlist():
+                weight_item = item.get_weight()
+                new_weight = Item_combination_try.get_weight() + weight_item
+                volume_item = item.get_volume()
+                new_volume = Item_combination_try.get_volume() + volume_item
+                if (new_weight > MAX_WEIGHT or new_volume > MAX_VOLUME):
+                    compare_item_combinations()
+
+
+class Solver_Optimal_Recursive:
+    def solve(self, knapsack, All_items) -> None:
+        pass
+
+
+class Solver_Optimal_Iterative_Deepcopy:
+    def solve(self, knapsack, All_items) -> None:
+        pass
+
+
+class Solver_Optimal_Iterative:
+    def solve(self, knapsack, All_items) -> None:
+        pass
+
+
+class Solver_Random_Improved:
+    def solve(self, knapsack, All_items) -> None:
+        pass
 
 
 def main():
