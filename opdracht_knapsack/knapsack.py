@@ -95,11 +95,33 @@ class Items:
         return self.total_recources.get_points_weight_volume()
 
 
-def load_knapsack(knapsack_file):
-    with open(knapsack_file + ".csv", mode="r") as item_file:
-        csv_reader = csv.DictReader(csv_reader)
-        for row in csv_reader:
+class Knapsack:
+    def __init__(self, max_weight, max_volume):
+        self.max_weight = max_weight
+        self.max_volume = max_volume
 
+    def add_items(self, Items):
+        self.items = Items
+
+    def get_points(self):
+    # The self.items is only initialised if the items are added by the add items
+        try:
+            return self.items.get_points
+        except:
+            return 0
+
+
+def load_knapsack(knapsack_file):
+    All_items = Items()
+    with open(knapsack_file + ".csv", mode="r") as item_file:
+        csv_reader = csv.DictReader(csv_reader, delimiter=", ")
+        for row in csv_reader:
+            if (row["name"] == "knapsack"):
+                init_Knapsack = Knapsack(row["weight", row["volume"]])
+            else:
+                Item = Item(row["name"], row["points"], row["weight"], row["volume"])
+                All_items.add_item(Item)
+    return (init_Knapsack, All_items)
 
 
 def main():
