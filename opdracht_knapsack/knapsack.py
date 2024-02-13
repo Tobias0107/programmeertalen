@@ -1,3 +1,79 @@
+import csv
+
+MAX_WEIGHT = 110
+MAX_VOLUME = 150
+
+
+class Recources:
+    def __init__(self, points, weight, volume):
+        self.recources = (points, weight, volume)
+
+    def get_points(self):
+        (points, weight, volume) = self.recources
+        return points
+
+    def get_weight(self):
+        (points, weight, volume) = self.recources
+        return weight
+
+    def get_volume(self):
+        (points, weight, volume) = self.recources
+        return volume
+
+    def add_volume(self, added_volume):
+        (points, weight, volume) = self.recources
+        volume += added_volume
+        self.recources = (points, weight, volume)
+
+    def add_weight(self, added_weight):
+        (points, weight, volume) = self.recources
+        weight += added_weight
+        self.recources = (points, weight, volume)
+
+    def add_points(self, added_points):
+        (points, weight, volume) = self.recources
+        points += added_points
+        self.recources = (points, weight, volume)
+
+
+class Item:
+    def __init__(self, name, points, weight, volume):
+        self.recources = Recources(points, weight, volume)
+        self.name = str(name)
+
+    def __repr__(self):
+        return self.name
+
+    def get_points(self):
+        return self.recources.get_points()
+
+    def get_weight(self):
+        return self.recources.get_weight()
+
+    def get_volume(self):
+        return self.recources.get_volume()
+
+    def get_points_weight_volume(self):
+        return self.recources
+
+
+class Items:
+    def __init__(self):
+        self.itemlist = []
+
+    def add_item(self, item):
+        self.itemlist.append(item)
+
+    def 
+
+
+def load_knapsack(knapsack_file):
+    with open(knapsack_file + ".csv", mode="r") as item_file:
+        csv_reader = csv.DictReader(csv_reader)
+        for row in csv_reader:
+
+
+
 def main():
     solver_random = Solver_Random(1000)
     solver_optimal_recursive = Solver_Optimal_Recursive()
