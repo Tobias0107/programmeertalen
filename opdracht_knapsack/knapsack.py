@@ -75,9 +75,16 @@ class Items:
         return string
 
     def __gt__(self, other):
-        
+        if (not isinstance(other, Items)):
+            raise TypeError("Compare should be between items classes")
+        if (self.get_points() > other.get_points()):
+            return True
+        else:
+            return False
 
     def add_item(self, item):
+        if (not isinstance(item, Item)):
+            raise TypeError("Expected Item class")
         (points, weight, volume) = self.total_recources
         points += item.get_points()
         weight += item.get_weight()
@@ -106,9 +113,11 @@ class Knapsack:
         self.max_weight = max_weight
         self.max_volume = max_volume
 
-    def add_items(self, Items):
+    def add_items(self, Item_list):
     # Items should be a list with items of the class items
-        self.items = Items
+        if (not isinstance(Item_list, Items)):
+            raise TypeError("Expected Items class")
+        self.items = Item_list
 
     def get_points(self):
     # The self.items is only initialised if the items are added by the add items
