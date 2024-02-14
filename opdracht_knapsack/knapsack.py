@@ -128,7 +128,7 @@ class Knapsack:
             return 0
 
     def save(self, solution_file):
-        with open(solution_file + ".svg", mode="a") as solutions_file:
+        with open(solution_file, mode="a") as solutions_file:
             try:
                 points_str = f"points: {self.get_points()}"
                 solutions_file.write(points_str)
@@ -140,8 +140,8 @@ class Knapsack:
 def load_knapsack(knapsack_file):
     All_items = Items()
     init_Knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
-    with open(knapsack_file + ".csv", mode="r") as item_file:
-        csv_reader = csv.DictReader(csv_reader, delimiter=", ")
+    with open(knapsack_file, mode="r") as item_file:
+        csv_reader = csv.DictReader(item_file, delimiter=", ")
         for row in csv_reader:
             if (row["name"] == "knapsack"):
                 init_Knapsack = Knapsack(row["weight", row["volume"]])
@@ -186,21 +186,33 @@ class Solver_Random:
 
 
 class Solver_Optimal_Recursive:
+    def __init__(self) -> None:
+        pass
+
     def solve(self, knapsack, All_items) -> None:
         pass
 
 
 class Solver_Optimal_Iterative_Deepcopy:
+    def __init__(self) -> None:
+        pass
+
     def solve(self, knapsack, All_items) -> None:
         pass
 
 
 class Solver_Optimal_Iterative:
+    def __init__(self) -> None:
+        pass
+
     def solve(self, knapsack, All_items) -> None:
         pass
 
 
 class Solver_Random_Improved:
+    def __init__(self, amount_of_tries) -> None:
+        pass
+
     def solve(self, knapsack, All_items) -> None:
         pass
 
