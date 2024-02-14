@@ -146,8 +146,8 @@ def load_knapsack(knapsack_file):
             if (row["name"] == "knapsack"):
                 init_Knapsack = Knapsack(row["weight", row["volume"]])
             else:
-                Item = Item(row["name"], row["points"], row["weight"],\
-                             row["volume"])
+                Item = Item(row["name"], row["points"], row["weight"],
+                            row["volume"])
                 All_items.add_item(Item)
     return (init_Knapsack, All_items)
 
