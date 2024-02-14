@@ -114,16 +114,17 @@ class Knapsack:
         self.max_volume = max_volume
 
     def add_items(self, Item_list):
-    # Items should be a list with items of the class items
+        # Items should be a list with items of the class items
         if (not isinstance(Item_list, Items)):
             raise TypeError("Expected Items class")
         self.items = Item_list
 
     def get_points(self):
-    # The self.items is only initialised if the items are added by the add items
+        # The self.items is only initialised if the items are added by the add
+        # items
         try:
             return self.items.get_points()
-        except:
+        except Exception as e:
             return 0
 
     def save(self, solution_file):
@@ -132,7 +133,7 @@ class Knapsack:
                 points_str = f"points: {self.get_points()}"
                 solutions_file.write(points_str)
                 solutions_file.writelines(self.items)
-            except:
+            except Exception as e:
                 solutions_file.write("No solution in knapsack yet")
 
 
@@ -145,7 +146,8 @@ def load_knapsack(knapsack_file):
             if (row["name"] == "knapsack"):
                 init_Knapsack = Knapsack(row["weight", row["volume"]])
             else:
-                Item = Item(row["name"], row["points"], row["weight"], row["volume"])
+                Item = Item(row["name"], row["points"], row["weight"],\
+                             row["volume"])
                 All_items.add_item(Item)
     return (init_Knapsack, All_items)
 
@@ -245,5 +247,5 @@ def solve(solver, knapsack_file, solution_file):
     knapsack.save(solution_file)
 
 
-if __name__ == "__main__": # keep this at the bottom of the file
+if __name__ == "__main__":  # keep this at the bottom of the file
     main()
