@@ -138,6 +138,7 @@ class Knapsack:
 
 def load_knapsack(knapsack_file):
     All_items = Items()
+    init_Knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
     with open(knapsack_file + ".csv", mode="r") as item_file:
         csv_reader = csv.DictReader(csv_reader, delimiter=", ")
         for row in csv_reader:
@@ -152,6 +153,7 @@ def load_knapsack(knapsack_file):
 class Solver_Random:
     def __init__(self, number_of_tries):
         self.number_of_tries = number_of_tries
+        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items):
         if (not isinstance(All_items, Items)):
@@ -172,10 +174,13 @@ class Solver_Random:
                     if (Item_combination_try > Item_combination_best):
                         Item_combination_best = Item_combination_try
                         Item_combination_try = Items()
-                        break
+                    break
                 Item_combination_try.add_item(item)
+        knapsack.add_items(Item_combination_best)
+        self.knapsack = knapsack
 
-
+    def get_best_knapsack(self):
+        return self.knapsack
 
 
 class Solver_Optimal_Recursive:
