@@ -154,16 +154,28 @@ class Solver_Random:
         self.number_of_tries = number_of_tries
 
     def solve(self, knapsack, All_items):
+        if (not isinstance(All_items, Items)):
+            raise TypeError("Items class expected")
+        if (not isinstance(knapsack, Knapsack)):
+            raise TypeError("Knapsack class expected")
         Item_combination_try = Items()
         Item_combination_best = Items()
         for _ in range(self.number_of_tries):
             for item in All_items.get_itemlist():
+                if (not isinstance(item, Item)):
+                    raise TypeError("Item in itemlist of item class expected")
                 weight_item = item.get_weight()
                 new_weight = Item_combination_try.get_weight() + weight_item
                 volume_item = item.get_volume()
                 new_volume = Item_combination_try.get_volume() + volume_item
                 if (new_weight > MAX_WEIGHT or new_volume > MAX_VOLUME):
-                    compare_item_combinations()
+                    if (Item_combination_try > Item_combination_best):
+                        Item_combination_best = Item_combination_try
+                        Item_combination_try = Items()
+                        break
+                Item_combination_try.add_item(item)
+
+
 
 
 class Solver_Optimal_Recursive:
