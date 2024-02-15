@@ -85,7 +85,7 @@ class Items:
     def add_item(self, item):
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
-        (points, weight, volume) = self.total_recources
+        (points, weight, volume) = self.total_recources.get_points_weight_volume()
         points += item.get_points()
         weight += item.get_weight()
         volume += item.get_volume()
@@ -106,6 +106,12 @@ class Items:
 
     def get_itemlist(self):
         return self.itemlist
+
+    def get_string(self):
+        string = ""
+        for item in self.itemlist:
+            string += (str(item.get_name()) + "\n")
+        return string
 
 
 class Knapsack:
@@ -128,11 +134,13 @@ class Knapsack:
             return 0
 
     def save(self, solution_file):
-        with open(solution_file, mode="a") as solutions_file:
+        with open(solution_file, mode="w") as solutions_file:
             try:
-                points_str = f"points: {self.get_points()}"
+                points_str = f"points: {self.get_points()}\n"
                 solutions_file.write(points_str)
-                solutions_file.writelines(self.items)
+                items_str = self.items.get_string()
+                solutions_file.write("\n")
+                solutions_file.write(items_str)
             except Exception as e:
                 solutions_file.write("No solution in knapsack yet")
 
@@ -141,14 +149,15 @@ def load_knapsack(knapsack_file):
     All_items = Items()
     init_Knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
     with open(knapsack_file, mode="r") as item_file:
-        csv_reader = csv.DictReader(item_file, delimiter=", ")
+        csv_reader = csv.DictReader(item_file)
         for row in csv_reader:
+            row = dict(map(lambda tuple: (tuple[0].strip(), tuple[1].strip()), row.items()))
             if (row["name"] == "knapsack"):
-                init_Knapsack = Knapsack(row["weight", row["volume"]])
+                init_Knapsack = Knapsack(int(row["weight"]), int(row["volume"]))
             else:
-                Item = Item(row["name"], row["points"], row["weight"],
-                            row["volume"])
-                All_items.add_item(Item)
+                Item_object = Item(row["name"], int(row["points"]), int(row["weight"]),
+                            int(row["volume"]))
+                All_items.add_item(Item_object)
     return (init_Knapsack, All_items)
 
 
