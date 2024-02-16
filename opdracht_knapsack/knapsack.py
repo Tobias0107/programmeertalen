@@ -92,6 +92,17 @@ class Items:
         self.total_recources = Recources(points, weight, volume)
         self.itemlist.append(item)
 
+    def pop_item(self):
+        item = self.itemlist.pop()
+        if (not isinstance(item, Item)):
+            raise TypeError("Expected Item class")
+        (points, weight, volume) = self.total_recources.get_points_weight_volume()
+        points -= item.get_points()
+        weight -= item.get_weight()
+        volume -= item.get_volume()
+        self.total_recources = Recources(points, weight, volume)
+        return item
+
     def get_points(self):
         return self.total_recources.get_points()
 
@@ -133,6 +144,9 @@ class Knapsack:
         except Exception as e:
             return 0
 
+    def get_max_weight_volume(self):
+        return (self.max_weight, self.max_volume)
+
     def save(self, solution_file):
         with open(solution_file, mode="w") as solutions_file:
             try:
@@ -173,6 +187,7 @@ class Solver_Random:
             raise TypeError("Knapsack class expected")
         Item_combination_try = Items()
         Item_combination_best = Items()
+        max_weight, max_volume = knapsack.get_max_weight_volume()
         for _ in range(self.number_of_tries):
             for item in All_items.get_itemlist():
                 if (not isinstance(item, Item)):
@@ -181,7 +196,7 @@ class Solver_Random:
                 new_weight = Item_combination_try.get_weight() + weight_item
                 volume_item = item.get_volume()
                 new_volume = Item_combination_try.get_volume() + volume_item
-                if (new_weight > MAX_WEIGHT or new_volume > MAX_VOLUME):
+                if (new_weight > max_weight or new_volume > max_volume):
                     if (Item_combination_try > Item_combination_best):
                         Item_combination_best = Item_combination_try
                         Item_combination_try = Items()
@@ -196,10 +211,43 @@ class Solver_Random:
 
 class Solver_Optimal_Recursive:
     def __init__(self) -> None:
-        pass
+        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
-        pass
+        if (not isinstance(All_items, Items)):
+            raise TypeError("Items class expected")
+        if (not isinstance(knapsack, Knapsack)):
+            raise TypeError("Knapsack class expected")
+        items_try = Items()
+        max_weight, max_volume = knapsack.get_max_weight_volume()
+        items_best = Items()
+        items_best = self.recursive_solve(All_items=All_items, items_try=items_best)
+        knapsack.add_items(items_best)
+
+    def recursive_solve(self, All_items, items_try, max_weight, max_volume):
+        if (not isinstance(All_items, Items) and not isinstance(items_try, Items)):
+            raise TypeError("Items class expected")
+        try:
+            item = All_items.pop_item()
+            if (not isinstance(item, Item)):
+                raise TypeError("Item class expected")
+        except Exception as e:
+            return items_try
+        if (item.get_weight() + items_try.get_weight() > max_weight or
+            item.get_volume() + items_try.get_volume() > max_volume):
+            return items_try
+        points_not_added = self.recursive_solve(All_items=All_items,
+                                                items_try=items_try).get_points()
+        items_try.add_item(item=item)
+        points_added = self.recursive_solve(All_items=All_items, items_try=items_try).get_points()
+        if (points_added < points_not_added):
+            items_try.pop_item()
+            return items_try
+        else:
+            return items_try
+
+    def get_best_knapsack(self):
+        return self.knapsack
 
 
 class Solver_Optimal_Iterative_Deepcopy:
