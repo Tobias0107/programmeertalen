@@ -280,13 +280,37 @@ class Solver_Optimal_Recursive:
 
 class Solver_Optimal_Iterative_Deepcopy:
     def __init__(self) -> None:
-        pass
+        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
-        pass
+        if (not isinstance(All_items, Items)):
+            raise TypeError("Items class expected")
+        if (not isinstance(knapsack, Knapsack)):
+            raise TypeError("Knapsack class expected")
+        best_combination = Items()
+        max_weight, max_volume = knapsack.get_max_weight_volume()
+        stack = [Items()]
+        for item in All_items:
+            if (not isinstance(item, Item)):
+                raise TypeError("Item class expected")
+            for list_items in stack:
+                if (item.get_weight() + list_items.get_weight() > max_weight or item.get_volume() + list_items.get_volume() > max_volume):
+                    if (list_items > best_combination):
+                        best_combination = list_items
+                    else:
+                        stack.remove(list_items)
+                        continue
+                clone = copy.deepcopy(list_items)
+                clone.add_item(item)
+                stack.append(clone)
+        while len(stack) > 0:
+            list_items = stack.pop()
+            if (list_items > best_combination):
+                best_combination = list_items
+        knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
-        pass
+        return self.knapsack
 
 
 class Solver_Optimal_Iterative:
