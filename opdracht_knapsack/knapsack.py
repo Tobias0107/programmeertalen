@@ -165,12 +165,13 @@ def load_knapsack(knapsack_file):
     with open(knapsack_file, mode="r") as item_file:
         csv_reader = csv.DictReader(item_file)
         for row in csv_reader:
-            row = dict(map(lambda tuple: (tuple[0].strip(), tuple[1].strip()), row.items()))
+            row = dict(map(lambda tuple: (tuple[0].strip(), tuple[1].strip()),
+                           row.items()))
             if (row["name"] == "knapsack"):
                 init_Knapsack = Knapsack(int(row["weight"]), int(row["volume"]))
             else:
-                Item_object = Item(row["name"], int(row["points"]), int(row["weight"]),
-                            int(row["volume"]))
+                Item_object = Item(row["name"], int(row["points"]),
+                                   int(row["weight"]), int(row["volume"]))
                 All_items.add_item(Item_object)
     return (init_Knapsack, All_items)
 
@@ -237,7 +238,7 @@ class Solver_Optimal_Recursive:
         except Exception as e:
             return items_try
         if (item.get_weight() + items_try.get_weight() > max_weight or
-            item.get_volume() + items_try.get_volume() > max_volume):
+             item.get_volume() + items_try.get_volume() > max_volume):
             return items_try
         points_not_added = self.recursive_solve(All_items=All_items,
                                                 items_try=items_try).get_points()
