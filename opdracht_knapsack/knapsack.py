@@ -237,17 +237,28 @@ class Solver_Optimal_Recursive:
                 raise TypeError("Item class expected")
         except Exception as e:
             return items_try
+        print(f"weight item = {item.get_weight()}, volume item = {item.get_volume()}")
+        print(f"weight list = {items_try.get_weight()}, volume list = {items_try.get_volume()}")
         if (item.get_weight() + items_try.get_weight() > max_weight or item.get_volume() + items_try.get_volume() > max_volume):
+            print("\n\n condition activated\n\n")
             return items_try
-        points_not_added = self.recursive_solve(All_items=All_items,
-                                                items_try=items_try).get_points()
+        items_try_no_add = self.recursive_solve(All_items=All_items,
+                                                items_try=items_try,
+                                                max_weight=max_weight,
+                                                max_volume=max_volume)
         items_try.add_item(item=item)
-        points_added = self.recursive_solve(All_items=All_items, items_try=items_try).get_points()
+        items_try_add = self.recursive_solve(All_items=All_items,
+                                                items_try=items_try,
+                                                max_weight=max_weight,
+                                                max_volume=max_volume)
+        points_added = items_try_add.get_points()
+        points_not_added = items_try_no_add.get_points()
         if (points_added < points_not_added):
-            items_try.pop_item()
-            return items_try
+            print(f"\n\nreturns item not added = {items_try_no_add}")
+            return items_try_no_add
         else:
-            return items_try
+            print(f"\n\nreturns item added = {items_try_add}")
+            return items_try_add
 
     def get_best_knapsack(self):
         return self.knapsack
