@@ -237,8 +237,7 @@ class Solver_Optimal_Recursive:
                 raise TypeError("Item class expected")
         except Exception as e:
             return items_try
-        if (item.get_weight() + items_try.get_weight() > max_weight or
-             item.get_volume() + items_try.get_volume() > max_volume):
+        if (item.get_weight() + items_try.get_weight() > max_weight or item.get_volume() + items_try.get_volume() > max_volume):
             return items_try
         points_not_added = self.recursive_solve(All_items=All_items,
                                                 items_try=items_try).get_points()
