@@ -83,6 +83,14 @@ class Items:
         else:
             return False
 
+    def __copy__(self):
+        recources = self.total_recources
+        itemlist = self.itemlist.copy()
+        items = Items()
+        items.add_item_list(itemlist=itemlist)
+        items.replace_recources(recources=recources)
+        return items
+
     def add_item(self, item):
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
@@ -92,6 +100,12 @@ class Items:
         volume += item.get_volume()
         self.total_recources = Recources(points, weight, volume)
         self.itemlist.append(item)
+
+    def add_item_list(self, itemlist):
+        self.itemlist = itemlist
+
+    def replace_recources(self, recources):
+        self.total_recources = recources
 
     def pop_item(self):
         item = self.itemlist.pop()
@@ -243,8 +257,8 @@ class Solver_Optimal_Recursive:
                                         items_try=items_try,
                                         max_weight=max_weight,
                                         max_volume=max_volume)
-        items_try_no_add = copy.deepcopy(items_try)
-        All_items_copy = copy.deepcopy(All_items)
+        items_try_no_add = copy.copy(items_try)
+        All_items_copy = copy.copy(All_items)
         items_try_no_add = self.recursive_solve(All_items=All_items_copy,
                                                 items_try=items_try_no_add,
                                                 max_weight=max_weight,
