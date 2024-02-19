@@ -218,11 +218,14 @@ class Solver_Optimal_Recursive:
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
             raise TypeError("Knapsack class expected")
-        items_try = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
         items_best = Items()
-        items_best = self.recursive_solve(All_items=All_items, items_try=items_best)
+        items_best = self.recursive_solve(All_items=All_items,
+                                          items_try=items_best,
+                                          max_weight=max_weight,
+                                          max_volume=max_volume)
         knapsack.add_items(items_best)
+        self.knapsack = knapsack
 
     def recursive_solve(self, All_items, items_try, max_weight, max_volume):
         if (not isinstance(All_items, Items) and not isinstance(items_try, Items)):
