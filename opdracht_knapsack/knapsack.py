@@ -91,6 +91,10 @@ class Items:
         items.replace_recources(recources=recources)
         return items
 
+    def __len__(self):
+        print(len(self.itemlist))
+        return len(self.itemlist)
+
     def add_item(self, item):
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
@@ -299,7 +303,7 @@ class Solver_Optimal_Iterative_Deepcopy:
                     else:
                         stack.remove(list_items)
                         continue
-                clone = copy.deepcopy(list_items)
+                clone = copy.copy(list_items)
                 clone.add_item(item)
                 stack.append(clone)
         while len(stack) > 0:
@@ -345,8 +349,8 @@ def main():
     print("=== solving:", knapsack_file)
     solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
     solve(solver_optimal_recursive, knapsack_file + ".csv", knapsack_file + "_solution_optimal_recursive.csv")
-    # solve(solver_optimal_iterative_deepcopy, knapsack_file + ".csv",
-    #       knapsack_file + "_solution_optimal_iterative_deepcopy.csv")
+    solve(solver_optimal_iterative_deepcopy, knapsack_file + ".csv",
+          knapsack_file + "_solution_optimal_iterative_deepcopy.csv")
     # solve(solver_optimal_iterative, knapsack_file + ".csv", knapsack_file + "_solution_optimal_iterative.csv")
     # solve(solver_random_improved, knapsack_file + ".csv", knapsack_file + "_solution_random_improved.csv")
 
@@ -354,8 +358,8 @@ def main():
     print("=== solving:", knapsack_file)
     solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
     solve(solver_optimal_recursive, knapsack_file + ".csv", knapsack_file + "_solution_optimal_recursive.csv")
-    # solve(solver_optimal_iterative_deepcopy, knapsack_file + ".csv",
-    #       knapsack_file + "_solution_optimal_iterative_deepcopy.csv")
+    solve(solver_optimal_iterative_deepcopy, knapsack_file + ".csv",
+          knapsack_file + "_solution_optimal_iterative_deepcopy.csv")
     # solve(solver_optimal_iterative, knapsack_file + ".csv", knapsack_file + "_solution_optimal_iterative.csv")
     # solve(solver_random_improved, knapsack_file + ".csv", knapsack_file + "_solution_random_improved.csv")
 
