@@ -290,9 +290,8 @@ class Solver_Optimal_Iterative_Deepcopy:
         best_combination = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
         stack = [Items()]
-        for item in All_items:
-            if (not isinstance(item, Item)):
-                raise TypeError("Item class expected")
+        while len(All_items) > 0:
+            item = All_items.pop_item()
             for list_items in stack:
                 if (item.get_weight() + list_items.get_weight() > max_weight or item.get_volume() + list_items.get_volume() > max_volume):
                     if (list_items > best_combination):
