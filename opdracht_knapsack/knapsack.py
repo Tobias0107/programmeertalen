@@ -319,7 +319,7 @@ class Solver_Optimal_Iterative_Deepcopy_bfs:
         return self.knapsack
 
 
-class Solver_Optimal_Iterative_Deepcopy:
+class Solver_Optimal_Iterative_Deepcopy_failed:
     def __init__(self) -> None:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
@@ -352,6 +352,37 @@ class Solver_Optimal_Iterative_Deepcopy:
             list_items.add_item(item)
             index_stack.append(index)
             stack.append((list_items, index + 1))
+        self.knapsack.add_items(best_combination)
+
+    def get_best_knapsack(self):
+        return self.knapsack
+
+
+class Solver_Optimal_Iterative_Deepcopy:
+    def __init__(self) -> None:
+        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+
+    def solve(self, knapsack, All_items) -> None:
+        if (not isinstance(All_items, Items)):
+            raise TypeError("Items class expected")
+        if (not isinstance(knapsack, Knapsack)):
+            raise TypeError("Knapsack class expected")
+        max_weight, max_volume = knapsack.get_max_weight_volume()
+        best_combination = Items()
+        stack = [(All_items, Items())]
+        while len(stack) > 0:
+            To_add_items, current_combination = stack.pop()
+            if (len(To_add_items) == 0):
+                if (current_combination > best_combination):
+                    best_combination = copy.copy(current_combination)
+                continue
+            next_item = To_add_items.pop_item()
+            if (next_item.get_weight() + current_combination.get_weight() > max_weight or next_item.get_volume() + current_combination.get_volume() > max_volume):
+                stack.append((To_add_items, current_combination))
+                continue
+            stack.append((copy.copy(To_add_items), copy.copy(current_combination)))
+            current_combination.add_item(next_item)
+            stack.append(To_add_items, current_combination)
         self.knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
