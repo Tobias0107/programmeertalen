@@ -92,8 +92,10 @@ class Items:
         return items
 
     def __len__(self):
-        print(len(self.itemlist))
         return len(self.itemlist)
+
+    def __getitem__(self, index):
+        return self.itemlist[index]
 
     def add_item(self, item):
         if (not isinstance(item, Item)):
@@ -282,7 +284,7 @@ class Solver_Optimal_Recursive:
         return self.knapsack
 
 
-class Solver_Optimal_Iterative_Deepcopy:
+class Solver_Optimal_Iterative_Deepcopy_bfs:
     def __init__(self) -> None:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
@@ -297,6 +299,7 @@ class Solver_Optimal_Iterative_Deepcopy:
         while len(All_items) > 0:
             item = All_items.pop_item()
             for list_items in stack:
+                print("infinite in this loop")
                 if (item.get_weight() + list_items.get_weight() > max_weight or item.get_volume() + list_items.get_volume() > max_volume):
                     if (list_items > best_combination):
                         best_combination = list_items
@@ -311,6 +314,45 @@ class Solver_Optimal_Iterative_Deepcopy:
             if (list_items > best_combination):
                 best_combination = list_items
         knapsack.add_items(best_combination)
+
+    def get_best_knapsack(self):
+        return self.knapsack
+
+
+class Solver_Optimal_Iterative_Deepcopy:
+    def __init__(self) -> None:
+        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+
+    def solve(self, knapsack, All_items) -> None:
+        if (not isinstance(All_items, Items)):
+            raise TypeError("Items class expected")
+        if (not isinstance(knapsack, Knapsack)):
+            raise TypeError("Knapsack class expected")
+        best_combination = Items()
+        max_weight, max_volume = knapsack.get_max_weight_volume()
+        index = 0
+        stack = [(Items(), index)]
+        index_stack = []
+        while len(stack) > 0:
+            list_items, index = stack.pop()
+            if index == len(All_items):
+                if (list_items > best_combination):
+                    best_combination = copy.copy(list_items)
+                list_items.pop_item()
+                try:
+                    index = index_stack.pop() + 1
+                    if (index == len(All_items)):
+                        break
+                except Exception as e:
+                    break
+            item = All_items[index]
+            if not ((item.get_weight() + list_items.get_weight() < max_weight) and (item.get_volume() + list_items.get_volume() < max_volume)):
+                stack.append((list_items, index + 1))
+                continue
+            list_items.add_item(item)
+            index_stack.append(index)
+            stack.append((list_items, index + 1))
+        self.knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
         return self.knapsack
@@ -365,7 +407,7 @@ def main():
 
     knapsack_file = "knapsack_large"
     print("=== solving:", knapsack_file)
-    solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
+    # solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
     # solve(solver_random_improved, knapsack_file + ".csv", knapsack_file + "_solution_random_improved.csv")
 
 
