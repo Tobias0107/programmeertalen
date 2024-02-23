@@ -102,7 +102,8 @@ class Items:
     def add_item(self, item):
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
-        (points, weight, volume) = self.total_recources.get_points_weight_volume()
+        (points, weight,
+         volume) = self.total_recources.get_points_weight_volume()
         points += item.get_points()
         weight += item.get_weight()
         volume += item.get_volume()
@@ -119,7 +120,8 @@ class Items:
         item = self.itemlist.pop()
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
-        (points, weight, volume) = self.total_recources.get_points_weight_volume()
+        (points, weight,
+         volume) = self.total_recources.get_points_weight_volume()
         points -= item.get_points()
         weight -= item.get_weight()
         volume -= item.get_volume()
@@ -152,7 +154,8 @@ class Items:
 
     def remove_item(self, item):
         self.itemlist.remove(item)
-        (points, weight, volume) = self.total_recources.get_points_weight_volume()
+        (points, weight,
+         volume) = self.total_recources.get_points_weight_volume()
         points -= item.get_points()
         weight -= item.get_weight()
         volume -= item.get_volume()
@@ -264,7 +267,9 @@ class Solver_Optimal_Recursive:
         self.knapsack = knapsack
 
     def recursive_solve(self, All_items, items_try, max_weight, max_volume):
-        if (not isinstance(All_items, Items) and not isinstance(items_try, Items)):
+        # the not not is for < 80 lines and visual indent combined
+        if not not (not isinstance(All_items, Items) and
+                    not isinstance(items_try, Items)):
             raise TypeError("Items class expected")
         try:
             item = All_items.pop_item()
@@ -272,7 +277,9 @@ class Solver_Optimal_Recursive:
                 raise TypeError("Item class expected")
         except Exception as e:
             return items_try
-        if (item.get_weight() + items_try.get_weight() > max_weight or item.get_volume() + items_try.get_volume() > max_volume):
+        # the not not is for < 80 lines and visual indent combined
+        if not not (item.get_weight() + items_try.get_weight() > max_weight or
+                    item.get_volume() + items_try.get_volume() > max_volume):
             return self.recursive_solve(All_items=All_items,
                                         items_try=items_try,
                                         max_weight=max_weight,
@@ -317,10 +324,15 @@ class Solver_Optimal_Iterative_Deepcopy:
                     best_combination = copy.copy(current_combination)
                 continue
             next_item = To_add_items.pop_item()
-            if (next_item.get_weight() + current_combination.get_weight() > max_weight or next_item.get_volume() + current_combination.get_volume() > max_volume):
+            # the not not is for < 80 lines and visual indent combined
+            if not not (next_item.get_weight() +
+                        current_combination.get_weight() > max_weight or
+                        next_item.get_volume() +
+                        current_combination.get_volume() > max_volume):
                 stack.append((To_add_items, current_combination))
                 continue
-            stack.append((copy.copy(To_add_items), copy.copy(current_combination)))
+            stack.append((copy.copy(To_add_items),
+                          copy.copy(current_combination)))
             current_combination.add_item(next_item)
             stack.append((To_add_items, current_combination))
         self.knapsack.add_items(best_combination)
@@ -346,7 +358,10 @@ class Solver_Optimal_Iterative:
                 items_combination = Items()
                 for item in list_combination:
                     items_combination.add_item(item)
-                if (items_combination > best_combination and items_combination.get_weight() <= max_weight and items_combination.get_volume() <= max_volume):
+                # the not not is for < 80 lines and visual indent combined
+                if not not (items_combination > best_combination and
+                            items_combination.get_weight() <= max_weight and
+                            items_combination.get_volume() <= max_volume):
                     best_combination = items_combination
         self.knapsack.add_items(best_combination)
 
@@ -415,26 +430,36 @@ def main():
 
     knapsack_file = "knapsack_small"
     print("=== solving:", knapsack_file)
-    solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
-    solve(solver_optimal_recursive, knapsack_file + ".csv", knapsack_file + "_solution_optimal_recursive.csv")
+    solve(solver_random, knapsack_file + ".csv", knapsack_file +
+          "_solution_random.csv")
+    solve(solver_optimal_recursive, knapsack_file + ".csv", knapsack_file +
+          "_solution_optimal_recursive.csv")
     solve(solver_optimal_iterative_deepcopy, knapsack_file + ".csv",
           knapsack_file + "_solution_optimal_iterative_deepcopy.csv")
-    solve(solver_optimal_iterative, knapsack_file + ".csv", knapsack_file + "_solution_optimal_iterative.csv")
-    solve(solver_random_improved, knapsack_file + ".csv", knapsack_file + "_solution_random_improved.csv")
+    solve(solver_optimal_iterative, knapsack_file + ".csv", knapsack_file +
+          "_solution_optimal_iterative.csv")
+    solve(solver_random_improved, knapsack_file + ".csv", knapsack_file +
+          "_solution_random_improved.csv")
 
     knapsack_file = "knapsack_medium"
     print("=== solving:", knapsack_file)
-    solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
-    solve(solver_optimal_recursive, knapsack_file + ".csv", knapsack_file + "_solution_optimal_recursive.csv")
+    solve(solver_random, knapsack_file + ".csv", knapsack_file +
+          "_solution_random.csv")
+    solve(solver_optimal_recursive, knapsack_file + ".csv", knapsack_file +
+          "_solution_optimal_recursive.csv")
     solve(solver_optimal_iterative_deepcopy, knapsack_file + ".csv",
           knapsack_file + "_solution_optimal_iterative_deepcopy.csv")
-    solve(solver_optimal_iterative, knapsack_file + ".csv", knapsack_file + "_solution_optimal_iterative.csv")
-    solve(solver_random_improved, knapsack_file + ".csv", knapsack_file + "_solution_random_improved.csv")
+    solve(solver_optimal_iterative, knapsack_file + ".csv", knapsack_file +
+          "_solution_optimal_iterative.csv")
+    solve(solver_random_improved, knapsack_file + ".csv", knapsack_file +
+          "_solution_random_improved.csv")
 
     knapsack_file = "knapsack_large"
     print("=== solving:", knapsack_file)
-    solve(solver_random, knapsack_file + ".csv", knapsack_file + "_solution_random.csv")
-    solve(solver_random_improved, knapsack_file + ".csv", knapsack_file + "_solution_random_improved.csv")
+    solve(solver_random, knapsack_file + ".csv", knapsack_file +
+          "_solution_random.csv")
+    solve(solver_random_improved, knapsack_file + ".csv", knapsack_file +
+          "_solution_random_improved.csv")
 
 
 def solve(solver, knapsack_file, solution_file):
@@ -444,7 +469,8 @@ def solve(solver, knapsack_file, solution_file):
     knapsack, items = load_knapsack(knapsack_file)
     solver.solve(knapsack, items)
     knapsack = solver.get_best_knapsack()
-    print(f"saving solution with {knapsack.get_points()} points to '{solution_file}'")
+    print(f"saving solution with {knapsack.get_points()} points to
+          '{solution_file}'")
     knapsack.save(solution_file)
 
 
@@ -469,8 +495,8 @@ if __name__ == "__main__":  # keep this at the bottom of the file
 #             for list_items in stack:
 #                 print("infinite in this loop")
 #                 if (item.get_weight() + list_items.get_weight() > max_weight
-                    #  or item.get_volume() + list_items.get_volume() >
-                    # max_volume):
+#                      or item.get_volume() + list_items.get_volume() >
+#                     max_volume):
 #                     if (list_items > best_combination):
 #                         best_combination = list_items
 #                     else:
