@@ -205,7 +205,8 @@ def load_knapsack(knapsack_file):
             row = dict(map(lambda tuple: (tuple[0].strip(), tuple[1].strip()),
                            row.items()))
             if (row["name"] == "knapsack"):
-                init_Knapsack = Knapsack(int(row["weight"]), int(row["volume"]))
+                init_Knapsack = Knapsack(int(row["weight"]),
+                                         int(row["volume"]))
             else:
                 Item_object = Item(row["name"], int(row["points"]),
                                    int(row["weight"]), int(row["volume"]))
@@ -469,7 +470,7 @@ def solve(solver, knapsack_file, solution_file):
     knapsack, items = load_knapsack(knapsack_file)
     solver.solve(knapsack, items)
     knapsack = solver.get_best_knapsack()
-    print(f"saving solution with {knapsack.get_points()} points to
+    print(f"saving solution with {knapsack.get_points()} points to \
           '{solution_file}'")
     knapsack.save(solution_file)
 
