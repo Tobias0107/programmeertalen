@@ -382,7 +382,7 @@ class Solver_Optimal_Iterative_Deepcopy:
                 continue
             stack.append((copy.copy(To_add_items), copy.copy(current_combination)))
             current_combination.add_item(next_item)
-            stack.append(To_add_items, current_combination)
+            stack.append((To_add_items, current_combination))
         self.knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
