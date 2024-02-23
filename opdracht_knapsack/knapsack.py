@@ -356,24 +356,35 @@ class Solver_Random_Improved:
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
             raise TypeError("Knapsack class expected")
-        Item_combination_try = Items()
         Item_combination_best = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
+        All_items.shuffle()
+        for _ in All_items.get_itemlist():
+            item = All_items.pop_item()
+            if (not isinstance(item, Item)):
+                raise TypeError("Item in itemlist of item class expected")
+            weight_item = item.get_weight()
+            new_weight = Item_combination_best.get_weight() + weight_item
+            volume_item = item.get_volume()
+            new_volume = Item_combination_best.get_volume() + volume_item
+            if (new_weight > max_weight or new_volume > max_volume):
+                break
+            Item_combination_best.add_item(item)
+
         for _ in range(self.number_of_tries):
+            Item_combination_best.shuffle()
+            Item_combination_best.pop_item()
             All_items.shuffle()
-            for item in All_items.get_itemlist():
-                if (not isinstance(item, Item)):
-                    raise TypeError("Item in itemlist of item class expected")
+            Copy_all_items = copy.copy(All_items)
+            while len(Copy_all_items) != 0:
+                item = Copy_all_items.pop_item()
                 weight_item = item.get_weight()
-                new_weight = Item_combination_try.get_weight() + weight_item
+                new_weight = Item_combination_best.get_weight() + weight_item
                 volume_item = item.get_volume()
-                new_volume = Item_combination_try.get_volume() + volume_item
+                new_volume = Item_combination_best.get_volume() + volume_item
                 if (new_weight > max_weight or new_volume > max_volume):
-                    if (Item_combination_try > Item_combination_best):
-                        Item_combination_best = Item_combination_try
-                        Item_combination_try = Items()
-                    break
-                Item_combination_try.add_item(item)
+                    continue
+                Item_combination_best.add_item(item)
         knapsack.add_items(Item_combination_best)
         self.knapsack = knapsack
 
