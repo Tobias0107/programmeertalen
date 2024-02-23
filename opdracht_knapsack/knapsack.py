@@ -1,5 +1,6 @@
 import csv
 import copy
+import random
 
 MAX_WEIGHT = 110
 MAX_VOLUME = 150
@@ -145,6 +146,9 @@ class Items:
             string += (str(item.get_name()) + "\n")
         return string
 
+    def shuffle(self):
+        random.shuffle(self.itemlist)
+
 
 class Knapsack:
     def __init__(self, max_weight, max_volume):
@@ -211,6 +215,7 @@ class Solver_Random:
         Item_combination_best = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
         for _ in range(self.number_of_tries):
+            All_items.shuffle()
             for item in All_items.get_itemlist():
                 if (not isinstance(item, Item)):
                     raise TypeError("Item in itemlist of item class expected")
