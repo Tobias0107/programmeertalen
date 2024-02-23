@@ -8,76 +8,152 @@ MAX_VOLUME = 150
 
 
 class Recources:
+    """This class stores the recources, points, weight, and volume.
+
+    Initiated with:
+    argument1, points(any)
+    argument2, weight(any)
+    argument3, volume(any)
+
+    Return value:
+    none
+
+    """
     def __init__(self, points, weight, volume):
         self.recources = (points, weight, volume)
 
     def get_points(self):
+        """Returns the points stored in Recources"""
         (points, weight, volume) = self.recources
         return points
 
     def get_weight(self):
+        """Returns the weight stored in Recources"""
         (points, weight, volume) = self.recources
         return weight
 
     def get_volume(self):
+        """Returns the volume stored in Recources"""
         (points, weight, volume) = self.recources
         return volume
 
     def get_points_weight_volume(self):
+        """Returns a tuple (points, weight, volume) with the stored recources
+        """
         return self.recources
 
     def add_volume(self, added_volume):
+        """This function adds the given volume to the recources for storage
+
+        Parameter: to_add_volume(int)
+
+        Returnvalue: none
+        """
         (points, weight, volume) = self.recources
         volume += added_volume
         self.recources = (points, weight, volume)
 
     def add_weight(self, added_weight):
+        """This function adds the given weight to the recources for storage
+
+        Parameter: to_add_weight(int)
+
+        Returnvalue: none
+        """
         (points, weight, volume) = self.recources
         weight += added_weight
         self.recources = (points, weight, volume)
 
     def add_points(self, added_points):
+        """This function adds the given points to the recources for storage
+
+        Parameter: to_add_points(int)
+
+        Returnvalue: none
+        """
         (points, weight, volume) = self.recources
         points += added_points
         self.recources = (points, weight, volume)
 
 
 class Item:
+    """This class is for storing items. The name, points, weight, and volume
+    are stored within the class.
+
+    Initiated with:
+    argument1, name_item(string)
+    argument2, points_item(any)
+    argument3, weight_item(any)
+    argument4, volume_item(any)
+
+    Return value initiation: none
+
+    """
     def __init__(self, name, points, weight, volume):
+        """Initiate item with given name and recources"""
         self.recources = Recources(points, weight, volume)
         self.name = str(name)
 
     def __repr__(self):
+        """Returns the name of the item (string)"""
         return self.name
 
     def get_points(self):
+        """Returns points item (any)"""
         return self.recources.get_points()
 
     def get_weight(self):
+        """Returns Weight item (any)"""
         return self.recources.get_weight()
 
     def get_volume(self):
+        """Returns volume item (any)"""
         return self.recources.get_volume()
 
     def get_name(self):
+        """Returns name item (string)"""
         return self.name
 
     def get_points_weight_volume(self):
+        """Returns a tuple (points, weight, volume) of the recources of the
+        item"""
         return self.recources.get_points_weight_volume()
 
 
 class Items:
+    """This Itemsclass is a list for items of the Item class. This class keeps
+    track of the total recources of all items in the list.
+
+    This class supports the greater than sign (>)
+    This class supports the length function ( len(Itemsclass) )
+    This class supports the getitem dunder method. So indexing[] works
+    This class has it's own copy dunder method (so copy.copy works)
+
+    Initiated with:
+    no arguments
+
+    Return value initiation:
+    none
+
+    """
     def __init__(self):
+        """Initiating item with zero recources as default, and an empty
+        itemlist"""
         self.total_recources = Recources(0, 0, 0)
         self.itemlist = []
 
     def __repr__(self):
+        """Returns a string representation of the items, That being the names
+        of the items, for every item one line"""
         string = ""
         for item in self.itemlist:
             string += (str(item.get_name()) + "\n")
         return string
 
     def __gt__(self, other):
+        """Compares the two itemsclasses and returnes a True boolian if the
+        greater itemsclass has more points than the lesser itemsclass, False
+        otherwise"""
         if (not isinstance(other, Items)):
             raise TypeError("Compare should be between items classes")
         if (self.get_points() > other.get_points()):
@@ -86,6 +162,8 @@ class Items:
             return False
 
     def __copy__(self):
+        """Returnes a itemsclass of the items class initalised with a copy of
+        the itemslist and recources"""
         recources = self.total_recources
         itemlist = self.itemlist.copy()
         items = Items()
@@ -94,12 +172,17 @@ class Items:
         return items
 
     def __len__(self):
+        """returns the amount of items in the list"""
         return len(self.itemlist)
 
     def __getitem__(self, index):
+        """returnes the item at the index of the itemlist"""
         return self.itemlist[index]
 
     def add_item(self, item):
+        """This function adds the given item of the Item class to the
+        Itemsclass. The item is added to the list, and the recources are
+        updated."""
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
         (points, weight,
@@ -111,12 +194,23 @@ class Items:
         self.itemlist.append(item)
 
     def add_item_list(self, itemlist):
+        """This function replaces the items of the itemsclass with the given
+        list with items.
+        Be carefull, the recources are not updated. To do that one has to call
+        replace_recources"""
+        if (not isinstance(itemlist, list)):
+            raise TypeError("Expected a list")
         self.itemlist = itemlist
 
     def replace_recources(self, recources):
+        """This function replaces the recources of the item by the given
+        recources"""
         self.total_recources = recources
 
     def pop_item(self):
+        """This function pops the first item of the itemsclass, and gives it
+        back. The recources are updated according to the recources of that item
+        """
         item = self.itemlist.pop()
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
@@ -129,30 +223,46 @@ class Items:
         return item
 
     def get_points(self):
+        """This function returns the total of the points of all items in the
+        items class"""
         return self.total_recources.get_points()
 
     def get_weight(self):
+        """This function returns the total of the weight of all the items in
+        the items class"""
         return self.total_recources.get_weight()
 
     def get_volume(self):
+        """This function returnes the total of the volume of all the items in
+        the items class"""
         return self.total_recources.get_volume()
 
     def get_points_weight_volume(self):
+        """This function returnes a tuple (points, weight, volume) with the
+        Total of all the points, weight and volume of all the items in the
+        items class"""
         return self.total_recources.get_points_weight_volume()
 
     def get_itemlist(self):
+        """This function returnes a list with in it all the items in the
+        itemsclass"""
         return self.itemlist
 
     def get_string(self):
+        """This function returnes a string with all the names of all the items
+        in the itemsclass, for every item a new line"""
         string = ""
         for item in self.itemlist:
             string += (str(item.get_name()) + "\n")
         return string
 
     def shuffle(self):
+        """The items in the itemsclass are shuffled"""
         random.shuffle(self.itemlist)
 
     def remove_item(self, item):
+        """This function removes the first item found that matches with the
+        given item from the itemclass, and updates the recources."""
         self.itemlist.remove(item)
         (points, weight,
          volume) = self.total_recources.get_points_weight_volume()
@@ -163,6 +273,15 @@ class Items:
 
 
 class Knapsack:
+    """Summary
+
+    Initiated with:
+    argument1, name(type)
+
+    Return value initiation:
+
+
+    """
     def __init__(self, max_weight, max_volume):
         self.max_weight = max_weight
         self.max_volume = max_volume
@@ -197,6 +316,15 @@ class Knapsack:
 
 
 def load_knapsack(knapsack_file):
+    """Summary
+
+    Parameters:
+    argument1, name(type)
+
+    Return value:
+
+
+    """
     All_items = Items()
     init_Knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
     with open(knapsack_file, mode="r") as item_file:
@@ -215,6 +343,15 @@ def load_knapsack(knapsack_file):
 
 
 class Solver_Random:
+    """Summary
+
+    Initiated with:
+    argument1, name(type)
+
+    Return value initiation:
+
+
+    """
     def __init__(self, number_of_tries):
         self.number_of_tries = number_of_tries
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
@@ -250,6 +387,15 @@ class Solver_Random:
 
 
 class Solver_Optimal_Recursive:
+    """Summary
+
+    Initiated with:
+    argument1, name(type)
+
+    Return value initiation:
+
+
+    """
     def __init__(self) -> None:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
@@ -307,6 +453,15 @@ class Solver_Optimal_Recursive:
 
 
 class Solver_Optimal_Iterative_Deepcopy:
+    """Summary
+
+    Initiated with:
+    argument1, name(type)
+
+    Return value initiation:
+
+
+    """
     def __init__(self) -> None:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
@@ -343,6 +498,15 @@ class Solver_Optimal_Iterative_Deepcopy:
 
 
 class Solver_Optimal_Iterative:
+    """Summary
+
+    Initiated with:
+    argument1, name(type)
+
+    Return value initiation:
+
+
+    """
     def __init__(self) -> None:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
@@ -371,6 +535,15 @@ class Solver_Optimal_Iterative:
 
 
 class Solver_Random_Improved:
+    """Summary
+
+    Initiated with:
+    argument1, name(type)
+
+    Return value initiation:
+
+
+    """
     def __init__(self, number_of_tries) -> None:
         self.number_of_tries = number_of_tries
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
@@ -477,40 +650,3 @@ def solve(solver, knapsack_file, solution_file):
 
 if __name__ == "__main__":  # keep this at the bottom of the file
     main()
-
-
-# class Solver_Optimal_Iterative_Deepcopy_bfs:
-#     def __init__(self) -> None:
-#         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
-
-#     def solve(self, knapsack, All_items) -> None:
-#         if (not isinstance(All_items, Items)):
-#             raise TypeError("Items class expected")
-#         if (not isinstance(knapsack, Knapsack)):
-#             raise TypeError("Knapsack class expected")
-#         best_combination = Items()
-#         max_weight, max_volume = knapsack.get_max_weight_volume()
-#         stack = [Items()]
-#         while len(All_items) > 0:
-#             item = All_items.pop_item()
-#             for list_items in stack:
-#                 print("infinite in this loop")
-#                 if (item.get_weight() + list_items.get_weight() > max_weight
-#                      or item.get_volume() + list_items.get_volume() >
-#                     max_volume):
-#                     if (list_items > best_combination):
-#                         best_combination = list_items
-#                     else:
-#                         stack.remove(list_items)
-#                         continue
-#                 clone = copy.copy(list_items)
-#                 clone.add_item(item)
-#                 stack.append(clone)
-#         while len(stack) > 0:
-#             list_items = stack.pop()
-#             if (list_items > best_combination):
-#                 best_combination = list_items
-#         knapsack.add_items(best_combination)
-
-#     def get_best_knapsack(self):
-#         return self.knapsack
