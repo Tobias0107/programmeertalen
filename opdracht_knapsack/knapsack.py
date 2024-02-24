@@ -1,3 +1,8 @@
+"""
+Name: Tobias van den Bosch
+UvAnettID: 15172635
+Short discription: 
+"""
 import csv
 import copy
 import random
@@ -20,6 +25,7 @@ class Recources:
 
     """
     def __init__(self, points, weight, volume):
+        """Initiate and store the given recources, points, weight and volume"""
         self.recources = (points, weight, volume)
 
     def get_points(self):
@@ -595,9 +601,24 @@ class Solver_Optimal_Iterative:
     None
     """
     def __init__(self) -> None:
+        """Initiates the solver, no parameters, no returnvalue"""
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
+        """This method finds the best solution to the knapsack problem by doing
+        a breath first search. This is implemented by iteration, without
+        Deepcopy in the process. But by doing a breath first search it is still
+        slower than the recursive and the Iterative with deepcopy. Afterwards,
+        the best combination is stored within the class.
+
+    Parameters:
+    Knapsack(Knapsack)
+    All_items(Items)
+    (All items are all the items that could be added to the knapsack)
+
+    Return value:
+    None
+    """
         if (not isinstance(All_items, Items)):
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
@@ -618,28 +639,55 @@ class Solver_Optimal_Iterative:
         self.knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
+        """This function returnes the knapsack initiated with the best
+        item combination found in the solve method. Or an empty knapsack if the
+        Solve method wasn't called before this method."""
         return self.knapsack
 
 
 class Solver_Random_Improved:
-    """Summary
+    """This class tries to solve the knapsack problem by packing the knapsack
+    randomly, and than in a loop for the given value amount of times, taking
+    out a random item in the knapsack, and than replacing it random. If the
+    change is positive, the change is kept. (Hill climbing algorithm).
 
     Initiated with:
-    argument1, name(type)
+    argument1, amount_of_tries(int)
 
     Return value initiation:
-
+    None
 
     """
     def __init__(self, number_of_tries) -> None:
+        """Initiating the solver. The number_of_tries parameters is the amount
+        of times the random solver has to make a random change to see if it has
+        a positive result"""
+        if (not isinstance(number_of_tries, int)):
+            raise TypeError("Expected a int")
         self.number_of_tries = number_of_tries
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
+        """This class tries to solve the knapsack problem by packing the
+        knapsack randomly, and than in a loop for the given value amount of
+        times, taking out a random item in the knapsack, and than replacing it
+        random. If the change is positive, the change is kept.
+        (Hill climbing algorithm).
+
+        Initiated with:
+        argument1, knapsack(Knapsack)
+        argument2, All_items(Items)
+        (All items are all the items that could be added to the knapsack)
+
+        Return value initiation:
+        None
+
+        """
         if (not isinstance(All_items, Items)):
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
             raise TypeError("Knapsack class expected")
+        #making a random combination
         Item_combination_best = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
         All_items.shuffle()
@@ -655,6 +703,8 @@ class Solver_Random_Improved:
             All_items.remove_item(item)
             Item_combination_best.add_item(item)
 
+        #making self.number_of_tries amount of small changes and keeping the
+        #change if it brings about a positive result in the points.
         for _ in range(self.number_of_tries):
             Item_combination_best.shuffle()
             All_items.shuffle()
@@ -679,6 +729,9 @@ class Solver_Random_Improved:
         self.knapsack = knapsack
 
     def get_best_knapsack(self):
+        """This function returnes the knapsack initiated with the best
+        item combination found in the solve method. Or an empty knapsack if the
+        Solve method wasn't called before this method."""
         return self.knapsack
 
 
