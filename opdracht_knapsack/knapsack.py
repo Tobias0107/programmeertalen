@@ -43,7 +43,7 @@ class Recources:
         return self.recources
 
     def add_volume(self, added_volume):
-        """This function adds the given volume to the recources for storage
+        """This method adds the given volume to the recources for storage
 
         Parameter: to_add_volume(int)
 
@@ -54,7 +54,7 @@ class Recources:
         self.recources = (points, weight, volume)
 
     def add_weight(self, added_weight):
-        """This function adds the given weight to the recources for storage
+        """This method adds the given weight to the recources for storage
 
         Parameter: to_add_weight(int)
 
@@ -65,7 +65,7 @@ class Recources:
         self.recources = (points, weight, volume)
 
     def add_points(self, added_points):
-        """This function adds the given points to the recources for storage
+        """This method adds the given points to the recources for storage
 
         Parameter: to_add_points(int)
 
@@ -125,7 +125,7 @@ class Items:
     track of the total recources of all items in the list.
 
     This class supports the greater than sign (>)
-    This class supports the length function ( len(Itemsclass) )
+    This class supports the length method ( len(Itemsclass) )
     This class supports the getitem dunder method. So indexing[] works
     This class has it's own copy dunder method (so copy.copy works)
 
@@ -180,7 +180,7 @@ class Items:
         return self.itemlist[index]
 
     def add_item(self, item):
-        """This function adds the given item of the Item class to the
+        """This method adds the given item of the Item class to the
         Itemsclass. The item is added to the list, and the recources are
         updated."""
         if (not isinstance(item, Item)):
@@ -194,7 +194,7 @@ class Items:
         self.itemlist.append(item)
 
     def add_item_list(self, itemlist):
-        """This function replaces the items of the itemsclass with the given
+        """This method replaces the items of the itemsclass with the given
         list with items.
         Be carefull, the recources are not updated. To do that one has to call
         replace_recources"""
@@ -203,12 +203,12 @@ class Items:
         self.itemlist = itemlist
 
     def replace_recources(self, recources):
-        """This function replaces the recources of the item by the given
+        """This method replaces the recources of the item by the given
         recources"""
         self.total_recources = recources
 
     def pop_item(self):
-        """This function pops the first item of the itemsclass, and gives it
+        """This method pops the first item of the itemsclass, and gives it
         back. The recources are updated according to the recources of that item
         """
         item = self.itemlist.pop()
@@ -223,33 +223,33 @@ class Items:
         return item
 
     def get_points(self):
-        """This function returns the total of the points of all items in the
+        """This method returns the total of the points of all items in the
         items class"""
         return self.total_recources.get_points()
 
     def get_weight(self):
-        """This function returns the total of the weight of all the items in
+        """This method returns the total of the weight of all the items in
         the items class"""
         return self.total_recources.get_weight()
 
     def get_volume(self):
-        """This function returnes the total of the volume of all the items in
+        """This method returnes the total of the volume of all the items in
         the items class"""
         return self.total_recources.get_volume()
 
     def get_points_weight_volume(self):
-        """This function returnes a tuple (points, weight, volume) with the
+        """This method returnes a tuple (points, weight, volume) with the
         Total of all the points, weight and volume of all the items in the
         items class"""
         return self.total_recources.get_points_weight_volume()
 
     def get_itemlist(self):
-        """This function returnes a list with in it all the items in the
+        """This method returnes a list with in it all the items in the
         itemsclass"""
         return self.itemlist
 
     def get_string(self):
-        """This function returnes a string with all the names of all the items
+        """This method returnes a string with all the names of all the items
         in the itemsclass, for every item a new line"""
         string = ""
         for item in self.itemlist:
@@ -261,7 +261,7 @@ class Items:
         random.shuffle(self.itemlist)
 
     def remove_item(self, item):
-        """This function removes the first item found that matches with the
+        """This method removes the first item found that matches with the
         given item from the itemclass, and updates the recources."""
         self.itemlist.remove(item)
         (points, weight,
@@ -273,37 +273,49 @@ class Items:
 
 
 class Knapsack:
-    """Summary
+    """This class represents the knapsack to pack. The knapsack class is
+    initiated with the max weight and volume it can pack, the class is
+    initiated without a items class, but it can be added afterwards.
+    The knapsack class also has the save method that makes a file that records
+    the items in the knapsack, and the total points of the items.
+
 
     Initiated with:
-    argument1, name(type)
+    argument1, max_weight(any)
+    argument2, max_volume(any)
 
     Return value initiation:
-
-
+    none
     """
     def __init__(self, max_weight, max_volume):
+        """Initiate the knapsack with the max_weight and max_volume"""
         self.max_weight = max_weight
         self.max_volume = max_volume
+        self.items = Items()
 
     def add_items(self, Item_list):
-        # Items should be a list with items of the class items
+        """This method adds the given Item_list of the class Items to the
+        knapsack."""
         if (not isinstance(Item_list, Items)):
             raise TypeError("Expected Items class")
         self.items = Item_list
 
     def get_points(self):
-        # The self.items is only initialised if the items are added by the add
-        # items
-        try:
-            return self.items.get_points()
-        except Exception as e:
-            return 0
+        """This method returns the total amount of points of the items
+        within the Items class that are added to the knapsack"""
+        return self.items.get_points()
 
     def get_max_weight_volume(self):
+        """This method returns a tuple (max_weight, max_volume) containing
+        the maximum weight and volume that the knapsack was initiated with"""
         return (self.max_weight, self.max_volume)
 
     def save(self, solution_file):
+        """This method saves the contents of the knapsack to a file with the
+        given name. If the file doesn't exist the file is created. The contents
+        of the file are first the points of the items on the front row,
+        followed by the names of the items within the knapsack all on a newline
+        """
         with open(solution_file, mode="w") as solutions_file:
             try:
                 points_str = f"points: {self.get_points()}\n"
@@ -312,18 +324,23 @@ class Knapsack:
                 solutions_file.write("\n")
                 solutions_file.write(items_str)
             except Exception as e:
-                solutions_file.write("No solution in knapsack yet")
+                solutions_file.write("No items in knapsack yet")
 
 
 def load_knapsack(knapsack_file):
-    """Summary
+    """This class reads the csv file with the items and possibly the max
+    weight, volume of the knapsack and converts it into a Items class and a
+    knapsack class. The knapsack class initiated with the max weight and volume
+    as described in the csv file, or by default max weight = 110 and max
+    volume = 150. The knapsack has no items in it. The items are within the
+    returned Items class.
 
     Parameters:
-    argument1, name(type)
+    argument1, name_file.csv(csv_file with items in it)
 
     Return value:
-
-
+    This class returns a tuple (Knapsack, Items) with in it the initiated
+    Knapsack and Items classes.
     """
     All_items = Items()
     init_Knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
@@ -343,20 +360,44 @@ def load_knapsack(knapsack_file):
 
 
 class Solver_Random:
-    """Summary
+    """This class solves the knapsack problem by putting items into the
+    knapsack randomly for the given amount of times. After the solve method
+    it solves the problem, and remembers the best found combination of items.
+    The get_best_knapsack method returnes a knapsack initiated with this best
+    found solution.
 
     Initiated with:
-    argument1, name(type)
+    argument1, number_of_tries(int)
 
     Return value initiation:
-
+    none
 
     """
     def __init__(self, number_of_tries):
+        """This method initiates the with the given number of tries that
+        specify how many times the solver has to try random combinations before
+        returning the best found combination solver. Number of tries should be
+        an int.
+        """
+        if (not isinstance(number_of_tries, int)):
+            raise TypeError("Expected a int")
         self.number_of_tries = number_of_tries
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items):
+        """This method solves the knapsack problem by randomly making
+        a combination of items that fit within the given knapsack for the
+        amount of times as specified when the solver was initiated.
+        The parameters include a knapsack class to pack, and all items that can
+        be packed.
+
+        Parameters:
+        argument1, knapsack(Knapsack)
+        argument2, All_items(Items)
+
+        Return value:
+        None
+        """
         if (not isinstance(All_items, Items)):
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
@@ -383,23 +424,40 @@ class Solver_Random:
         self.knapsack = knapsack
 
     def get_best_knapsack(self):
+        """returnes the best knapsack that was found in the solve method, or an
+        empty knapsack if the solve wasn't called """
         return self.knapsack
 
 
 class Solver_Optimal_Recursive:
-    """Summary
+    """This class finds the best solution to the knapsack problem by doing a
+    depth first search. This is implemented by recursion that can be somewhat
+    slower than iterative in python.
 
-    Initiated with:
-    argument1, name(type)
+    Initiation parameters:
+    None
 
-    Return value initiation:
-
-
+    Return value:
+    None
     """
     def __init__(self) -> None:
+        """Initiate the solver, no returnvalue, no parameters"""
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
+        """This method finds the best solution to the knapsack problem by doing
+        a depth first search. This is implemented by recursion that can be
+        somewhat slower than iterative in python.
+        The parameters include a knapsack class to pack, and all items that can
+        be packed. After this method the solution is stored in the class.
+
+        Parameters:
+        argument1, knapsack(Knapsack)
+        argument2, All_items(Items)
+
+        Return value:
+        None
+        """
         if (not isinstance(All_items, Items)):
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
@@ -414,6 +472,8 @@ class Solver_Optimal_Recursive:
         self.knapsack = knapsack
 
     def recursive_solve(self, All_items, items_try, max_weight, max_volume):
+        """Do not use this method, this is a method that is used by the
+        solve method to implement recursion"""
         # the not not is for < 80 lines and visual indent combined
         if not not (not isinstance(All_items, Items) and
                     not isinstance(items_try, Items)):
@@ -449,23 +509,45 @@ class Solver_Optimal_Recursive:
             return items_try_no_add
 
     def get_best_knapsack(self):
+        """This function returnes the knapsack initiated with the best
+        item combination found in the solve method. Or an empty knapsack if the
+        Solve method wasn't called before this method."""
         return self.knapsack
 
 
 class Solver_Optimal_Iterative_Deepcopy:
-    """Summary
+    """This class finds the best solution to the knapsack problem by doing a
+    depth first search. This is implemented by iteration, using Deepcopy in the
+    process (tho the class has it's own copy method that does exactly the same
+    but then 10 times faster). The Deepcopy method makes this class slower than
+    the recursive solver class.
 
-    Initiated with:
-    argument1, name(type)
+    Initiation parameters:
+    none
 
-    Return value initiation:
-
-
+    Return value:
+    None
     """
     def __init__(self) -> None:
+        """Initiate the solver, no returnvalue, no parameters"""
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
+        """This class finds the best solution to the knapsack problem by doing a
+        depth first search. This is implemented by iteration, using Deepcopy in the
+        process (tho the class has it's own copy method that does exactly the same
+        but then 10 times faster). The Deepcopy method makes this class slower than
+        the recursive solver class.
+        The parameters include a knapsack class to pack, and all items that can
+        be packed. After this method the solution is stored in the class.
+
+        Parameters:
+        argument1, knapsack(Knapsack)
+        argument2, All_items(Items)
+
+        Return value:
+        None
+        """
         if (not isinstance(All_items, Items)):
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
@@ -494,18 +576,23 @@ class Solver_Optimal_Iterative_Deepcopy:
         self.knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
+        """This function returnes the knapsack initiated with the best
+        item combination found in the solve method. Or an empty knapsack if the
+        Solve method wasn't called before this method."""
         return self.knapsack
 
 
 class Solver_Optimal_Iterative:
-    """Summary
+    """This class finds the best solution to the knapsack problem by doing a
+    breath first search. This is implemented by iteration, without Deepcopy in
+    the process. But by doing a breath first search it is still slower than the
+    recursive and the Iterative with deepcopy.
 
-    Initiated with:
-    argument1, name(type)
+    Initiation parameters:
+    none
 
     Return value initiation:
-
-
+    None
     """
     def __init__(self) -> None:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
