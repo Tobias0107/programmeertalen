@@ -1,7 +1,14 @@
 """
 Name: Tobias van den Bosch
 UvAnettID: 15172635
-Short discription: 
+Short discription:
+In a knapsack-problem, we get points for each item that we pack in the knapsack.
+Each item may only be packed once. The knapsack has limited resources,
+consisting of 'weight' and 'volume', which means that not all items can be
+packed. The total resources of the packed items cannot exceed the knapsack's
+resources. This file describes a number of solver classes, and classes that
+support them. These solvers find a solution for the knapsack-problem given in a
+.csv file. The main resolves a number of .csv files as example
 """
 import csv
 import copy
