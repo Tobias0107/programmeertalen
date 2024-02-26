@@ -24,9 +24,9 @@ class Recources:
     """This class stores the recources, points, weight, and volume.
 
     Initiated with:
-    argument1, points(any)
-    argument2, weight(any)
-    argument3, volume(any)
+    argument1, points(int)
+    argument2, weight(int)
+    argument3, volume(int)
 
     Return value:
     none
@@ -34,27 +34,30 @@ class Recources:
     """
     def __init__(self, points, weight, volume):
         """Initiate and store the given recources, points, weight and volume"""
-        self.recources = (points, weight, volume)
+        if not (isinstance(points, int) and isinstance(weight, int) and
+                isinstance(volume, int)):
+            raise TypeError("int expected")
+        self._recources = (points, weight, volume)
 
     def get_points(self):
         """Returns the points stored in Recources"""
-        (points, weight, volume) = self.recources
+        (points, weight, volume) = self._recources
         return points
 
     def get_weight(self):
         """Returns the weight stored in Recources"""
-        (points, weight, volume) = self.recources
+        (points, weight, volume) = self._recources
         return weight
 
     def get_volume(self):
         """Returns the volume stored in Recources"""
-        (points, weight, volume) = self.recources
+        (points, weight, volume) = self._recources
         return volume
 
     def get_points_weight_volume(self):
         """Returns a tuple (points, weight, volume) with the stored recources
         """
-        return self.recources
+        return self._recources
 
     def add_volume(self, added_volume):
         """This method adds the given volume to the recources for storage
@@ -63,9 +66,11 @@ class Recources:
 
         Returnvalue: none
         """
-        (points, weight, volume) = self.recources
+        if (not isinstance(added_volume, int)):
+            raise TypeError("int expected")
+        (points, weight, volume) = self._recources
         volume += added_volume
-        self.recources = (points, weight, volume)
+        self._recources = (points, weight, volume)
 
     def add_weight(self, added_weight):
         """This method adds the given weight to the recources for storage
@@ -74,9 +79,11 @@ class Recources:
 
         Returnvalue: none
         """
-        (points, weight, volume) = self.recources
+        if (not isinstance(added_weight, int)):
+            raise TypeError("int expected")
+        (points, weight, volume) = self._recources
         weight += added_weight
-        self.recources = (points, weight, volume)
+        self._recources = (points, weight, volume)
 
     def add_points(self, added_points):
         """This method adds the given points to the recources for storage
@@ -85,9 +92,11 @@ class Recources:
 
         Returnvalue: none
         """
-        (points, weight, volume) = self.recources
+        if (not isinstance(added_points, int)):
+            raise TypeError("int expected")
+        (points, weight, volume) = self._recources
         points += added_points
-        self.recources = (points, weight, volume)
+        self._recources = (points, weight, volume)
 
 
 class Item:
@@ -96,42 +105,42 @@ class Item:
 
     Initiated with:
     argument1, name_item(string)
-    argument2, points_item(any)
-    argument3, weight_item(any)
-    argument4, volume_item(any)
+    argument2, points_item(int)
+    argument3, weight_item(int)
+    argument4, volume_item(int)
 
     Return value initiation: none
 
     """
     def __init__(self, name, points, weight, volume):
         """Initiate item with given name and recources"""
-        self.recources = Recources(points, weight, volume)
-        self.name = str(name)
+        self._recources = Recources(points, weight, volume)
+        self._name = str(name)
 
     def __repr__(self):
         """Returns the name of the item (string)"""
-        return self.name
+        return self._name
 
     def get_points(self):
-        """Returns points item (any)"""
-        return self.recources.get_points()
+        """Returns points item (int)"""
+        return self._recources.get_points()
 
     def get_weight(self):
-        """Returns Weight item (any)"""
-        return self.recources.get_weight()
+        """Returns Weight item (int)"""
+        return self._recources.get_weight()
 
     def get_volume(self):
-        """Returns volume item (any)"""
-        return self.recources.get_volume()
+        """Returns volume item (int)"""
+        return self._recources.get_volume()
 
     def get_name(self):
         """Returns name item (string)"""
-        return self.name
+        return self._name
 
     def get_points_weight_volume(self):
         """Returns a tuple (points, weight, volume) of the recources of the
         item"""
-        return self.recources.get_points_weight_volume()
+        return self._recources.get_points_weight_volume()
 
 
 class Items:
@@ -153,14 +162,14 @@ class Items:
     def __init__(self):
         """Initiating item with zero recources as default, and an empty
         itemlist"""
-        self.total_recources = Recources(0, 0, 0)
-        self.itemlist = []
+        self._total_recources = Recources(0, 0, 0)
+        self._itemlist = []
 
     def __repr__(self):
         """Returns a string representation of the items, That being the names
         of the items, for every item one line"""
         string = ""
-        for item in self.itemlist:
+        for item in self._itemlist:
             string += (str(item.get_name()) + "\n")
         return string
 
@@ -178,8 +187,8 @@ class Items:
     def __copy__(self):
         """Returnes a itemsclass of the items class initalised with a copy of
         the itemslist and recources"""
-        recources = self.total_recources
-        itemlist = self.itemlist.copy()
+        recources = self._total_recources
+        itemlist = self._itemlist.copy()
         items = Items()
         items.add_item_list(itemlist=itemlist)
         items.replace_recources(recources=recources)
@@ -187,11 +196,11 @@ class Items:
 
     def __len__(self):
         """returns the amount of items in the list"""
-        return len(self.itemlist)
+        return len(self._itemlist)
 
     def __getitem__(self, index):
         """returnes the item at the index of the itemlist"""
-        return self.itemlist[index]
+        return self._itemlist[index]
 
     def add_item(self, item):
         """This method adds the given item of the Item class to the
@@ -200,12 +209,12 @@ class Items:
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
         (points, weight,
-         volume) = self.total_recources.get_points_weight_volume()
+         volume) = self._total_recources.get_points_weight_volume()
         points += item.get_points()
         weight += item.get_weight()
         volume += item.get_volume()
-        self.total_recources = Recources(points, weight, volume)
-        self.itemlist.append(item)
+        self._total_recources = Recources(points, weight, volume)
+        self._itemlist.append(item)
 
     def add_item_list(self, itemlist):
         """This method replaces the items of the itemsclass with the given
@@ -214,76 +223,76 @@ class Items:
         replace_recources"""
         if (not isinstance(itemlist, list)):
             raise TypeError("Expected a list")
-        self.itemlist = itemlist
+        self._itemlist = itemlist
 
     def replace_recources(self, recources):
         """This method replaces the recources of the item by the given
         recources"""
-        self.total_recources = recources
+        self._total_recources = recources
 
     def pop_item(self):
         """This method pops the first item of the itemsclass, and gives it
         back. The recources are updated according to the recources of that item
         """
-        item = self.itemlist.pop()
+        item = self._itemlist.pop()
         if (not isinstance(item, Item)):
             raise TypeError("Expected Item class")
         (points, weight,
-         volume) = self.total_recources.get_points_weight_volume()
+         volume) = self._total_recources.get_points_weight_volume()
         points -= item.get_points()
         weight -= item.get_weight()
         volume -= item.get_volume()
-        self.total_recources = Recources(points, weight, volume)
+        self._total_recources = Recources(points, weight, volume)
         return item
 
     def get_points(self):
         """This method returns the total of the points of all items in the
         items class"""
-        return self.total_recources.get_points()
+        return self._total_recources.get_points()
 
     def get_weight(self):
         """This method returns the total of the weight of all the items in
         the items class"""
-        return self.total_recources.get_weight()
+        return self._total_recources.get_weight()
 
     def get_volume(self):
         """This method returnes the total of the volume of all the items in
         the items class"""
-        return self.total_recources.get_volume()
+        return self._total_recources.get_volume()
 
     def get_points_weight_volume(self):
         """This method returnes a tuple (points, weight, volume) with the
         Total of all the points, weight and volume of all the items in the
         items class"""
-        return self.total_recources.get_points_weight_volume()
+        return self._total_recources.get_points_weight_volume()
 
     def get_itemlist(self):
         """This method returnes a list with in it all the items in the
         itemsclass"""
-        return self.itemlist
+        return self._itemlist
 
     def get_string(self):
         """This method returnes a string with all the names of all the items
         in the itemsclass, for every item a new line"""
         string = ""
-        for item in self.itemlist:
+        for item in self._itemlist:
             string += (str(item.get_name()) + "\n")
         return string
 
     def shuffle(self):
         """The items in the itemsclass are shuffled"""
-        random.shuffle(self.itemlist)
+        random.shuffle(self._itemlist)
 
     def remove_item(self, item):
         """This method removes the first item found that matches with the
         given item from the itemclass, and updates the recources."""
-        self.itemlist.remove(item)
+        self._itemlist.remove(item)
         (points, weight,
-         volume) = self.total_recources.get_points_weight_volume()
+         volume) = self._total_recources.get_points_weight_volume()
         points -= item.get_points()
         weight -= item.get_weight()
         volume -= item.get_volume()
-        self.total_recources = Recources(points, weight, volume)
+        self._total_recources = Recources(points, weight, volume)
 
 
 class Knapsack:
@@ -295,34 +304,36 @@ class Knapsack:
 
 
     Initiated with:
-    argument1, max_weight(any)
-    argument2, max_volume(any)
+    argument1, max_weight(int)
+    argument2, max_volume(int)
 
     Return value initiation:
     none
     """
     def __init__(self, max_weight, max_volume):
         """Initiate the knapsack with the max_weight and max_volume"""
-        self.max_weight = max_weight
-        self.max_volume = max_volume
-        self.items = Items()
+        if not (isinstance(max_weight, int) and isinstance(max_volume, int)):
+            raise TypeError("int expected")
+        self._max_weight = max_weight
+        self._max_volume = max_volume
+        self._items = Items()
 
     def add_items(self, Item_list):
         """This method adds the given Item_list of the class Items to the
         knapsack."""
         if (not isinstance(Item_list, Items)):
             raise TypeError("Expected Items class")
-        self.items = Item_list
+        self._items = Item_list
 
     def get_points(self):
         """This method returns the total amount of points of the items
         within the Items class that are added to the knapsack"""
-        return self.items.get_points()
+        return self._items.get_points()
 
     def get_max_weight_volume(self):
         """This method returns a tuple (max_weight, max_volume) containing
         the maximum weight and volume that the knapsack was initiated with"""
-        return (self.max_weight, self.max_volume)
+        return (self._max_weight, self._max_volume)
 
     def save(self, solution_file):
         """This method saves the contents of the knapsack to a file with the
@@ -334,7 +345,7 @@ class Knapsack:
             try:
                 points_str = f"points:{self.get_points()}\n"
                 solutions_file.write(points_str)
-                items_str = self.items.get_string()
+                items_str = self._items.get_string()
                 solutions_file.write(items_str)
             except Exception as e:
                 solutions_file.write("No items in knapsack yet")
@@ -394,8 +405,8 @@ class Solver_Random:
         """
         if (not isinstance(number_of_tries, int)):
             raise TypeError("Expected a int")
-        self.number_of_tries = number_of_tries
-        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+        self._number_of_tries = number_of_tries
+        self._knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items):
         """This method solves the knapsack problem by randomly making
@@ -418,7 +429,7 @@ class Solver_Random:
         Item_combination_try = Items()
         Item_combination_best = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
-        for _ in range(self.number_of_tries):
+        for _ in range(self._number_of_tries):
             All_items.shuffle()
             for item in All_items.get_itemlist():
                 if (not isinstance(item, Item)):
@@ -434,12 +445,12 @@ class Solver_Random:
                     break
                 Item_combination_try.add_item(item)
         knapsack.add_items(Item_combination_best)
-        self.knapsack = knapsack
+        self._knapsack = knapsack
 
     def get_best_knapsack(self):
         """returnes the best knapsack that was found in the solve method, or an
         empty knapsack if the solve wasn't called """
-        return self.knapsack
+        return self._knapsack
 
 
 class Solver_Optimal_Recursive:
@@ -455,7 +466,7 @@ class Solver_Optimal_Recursive:
     """
     def __init__(self) -> None:
         """Initiate the solver, no returnvalue, no parameters"""
-        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+        self._knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
         """This method finds the best solution to the knapsack problem by doing
@@ -482,7 +493,7 @@ class Solver_Optimal_Recursive:
                                           max_weight=max_weight,
                                           max_volume=max_volume)
         knapsack.add_items(items_best)
-        self.knapsack = knapsack
+        self._knapsack = knapsack
 
     def recursive_solve(self, All_items, items_try, max_weight, max_volume):
         """Do not use this method, this is a method that is used by the
@@ -525,7 +536,7 @@ class Solver_Optimal_Recursive:
         """This function returnes the knapsack initiated with the best
         item combination found in the solve method. Or an empty knapsack if the
         Solve method wasn't called before this method."""
-        return self.knapsack
+        return self._knapsack
 
 
 class Solver_Optimal_Iterative_Deepcopy:
@@ -543,7 +554,7 @@ class Solver_Optimal_Iterative_Deepcopy:
     """
     def __init__(self) -> None:
         """Initiate the solver, no returnvalue, no parameters"""
-        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+        self._knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
         """This class finds the best solution to the knapsack problem by doing
@@ -586,13 +597,13 @@ class Solver_Optimal_Iterative_Deepcopy:
                           copy.copy(current_combination)))
             current_combination.add_item(next_item)
             stack.append((To_add_items, current_combination))
-        self.knapsack.add_items(best_combination)
+        self._knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
         """This function returnes the knapsack initiated with the best
         item combination found in the solve method. Or an empty knapsack if the
         Solve method wasn't called before this method."""
-        return self.knapsack
+        return self._knapsack
 
 
 class Solver_Optimal_Iterative:
@@ -609,7 +620,7 @@ class Solver_Optimal_Iterative:
     """
     def __init__(self) -> None:
         """Initiates the solver, no parameters, no returnvalue"""
-        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+        self._knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
         """This method finds the best solution to the knapsack problem by doing
@@ -643,13 +654,13 @@ class Solver_Optimal_Iterative:
                             items_combination.get_weight() <= max_weight and
                             items_combination.get_volume() <= max_volume):
                     best_combination = items_combination
-        self.knapsack.add_items(best_combination)
+        self._knapsack.add_items(best_combination)
 
     def get_best_knapsack(self):
         """This function returnes the knapsack initiated with the best
         item combination found in the solve method. Or an empty knapsack if the
         Solve method wasn't called before this method."""
-        return self.knapsack
+        return self._knapsack
 
 
 class Solver_Random_Improved:
@@ -671,8 +682,8 @@ class Solver_Random_Improved:
         a positive result"""
         if (not isinstance(number_of_tries, int)):
             raise TypeError("Expected a int")
-        self.number_of_tries = number_of_tries
-        self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
+        self._number_of_tries = number_of_tries
+        self._knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
         """This class tries to solve the knapsack problem by packing the
@@ -710,9 +721,9 @@ class Solver_Random_Improved:
             All_items.remove_item(item)
             Item_combination_best.add_item(item)
 
-        # making self.number_of_tries amount of small changes and keeping the
+        # making self._number_of_tries amount of small changes and keeping the
         # change if it brings about a positive result in the points.
-        for _ in range(self.number_of_tries):
+        for _ in range(self._number_of_tries):
             Item_combination_best.shuffle()
             All_items.shuffle()
             Item_combination_try = copy.copy(Item_combination_best)
@@ -733,13 +744,13 @@ class Solver_Random_Improved:
                 Item_combination_best = Item_combination_try
                 All_items = copy_all_items
         knapsack.add_items(Item_combination_best)
-        self.knapsack = knapsack
+        self._knapsack = knapsack
 
     def get_best_knapsack(self):
         """This function returnes the knapsack initiated with the best
         item combination found in the solve method. Or an empty knapsack if the
         Solve method wasn't called before this method."""
-        return self.knapsack
+        return self._knapsack
 
 
 def main():
