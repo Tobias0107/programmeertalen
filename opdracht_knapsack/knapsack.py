@@ -332,10 +332,9 @@ class Knapsack:
         """
         with open(solution_file, mode="w") as solutions_file:
             try:
-                points_str = f"points: {self.get_points()}\n"
+                points_str = f"points:{self.get_points()}\n"
                 solutions_file.write(points_str)
                 items_str = self.items.get_string()
-                solutions_file.write("\n")
                 solutions_file.write(items_str)
             except Exception as e:
                 solutions_file.write("No items in knapsack yet")
