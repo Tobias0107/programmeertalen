@@ -2,13 +2,14 @@
 Name: Tobias van den Bosch
 UvAnettID: 15172635
 Short discription:
-In a knapsack-problem, we get points for each item that we pack in the knapsack.
-Each item may only be packed once. The knapsack has limited resources,
-consisting of 'weight' and 'volume', which means that not all items can be
-packed. The total resources of the packed items cannot exceed the knapsack's
-resources. This file describes a number of solver classes, and classes that
-support them. These solvers find a solution for the knapsack-problem given in a
-.csv file. The main resolves a number of .csv files as example
+In a knapsack-problem, we get points for each item that we pack in the
+knapsack. Each item may only be packed once. The knapsack has limited
+resources, consisting of 'weight' and 'volume', which means that not all items
+can be packed. The total resources of the packed items cannot exceed the
+knapsack's resources. This file describes a number of solver classes, and
+classes that support them. These solvers find a solution for the
+knapsack-problem given in a .csv file. The main resolves a number of .csv files
+as example
 """
 import csv
 import copy
@@ -546,11 +547,11 @@ class Solver_Optimal_Iterative_Deepcopy:
         self.knapsack = Knapsack(MAX_WEIGHT, MAX_VOLUME)
 
     def solve(self, knapsack, All_items) -> None:
-        """This class finds the best solution to the knapsack problem by doing a
-        depth first search. This is implemented by iteration, using Deepcopy in the
-        process (tho the class has it's own copy method that does exactly the same
-        but then 10 times faster). The Deepcopy method makes this class slower than
-        the recursive solver class.
+        """This class finds the best solution to the knapsack problem by doing
+        a depth first search. This is implemented by iteration, using Deepcopy
+        in the process (tho the class has it's own copy method that does
+        exactly the same but then 10 times faster). The Deepcopy method makes
+        this class slower than the recursive solver class.
         The parameters include a knapsack class to pack, and all items that can
         be packed. After this method the solution is stored in the class.
 
@@ -694,7 +695,7 @@ class Solver_Random_Improved:
             raise TypeError("Items class expected")
         if (not isinstance(knapsack, Knapsack)):
             raise TypeError("Knapsack class expected")
-        #making a random combination
+        # making a random combination
         Item_combination_best = Items()
         max_weight, max_volume = knapsack.get_max_weight_volume()
         All_items.shuffle()
@@ -710,8 +711,8 @@ class Solver_Random_Improved:
             All_items.remove_item(item)
             Item_combination_best.add_item(item)
 
-        #making self.number_of_tries amount of small changes and keeping the
-        #change if it brings about a positive result in the points.
+        # making self.number_of_tries amount of small changes and keeping the
+        # change if it brings about a positive result in the points.
         for _ in range(self.number_of_tries):
             Item_combination_best.shuffle()
             All_items.shuffle()
