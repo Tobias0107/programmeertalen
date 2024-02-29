@@ -1,5 +1,6 @@
 import System.Environment
 import Data.List
+import Distribution.Simple.Program.HcPkg (list)
 
 type Row = Int
 type Column = Int
@@ -56,5 +57,16 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       -- TODO: Call your solver.
+       print$freeInRow sud 9
        printSudoku sud
+
+freeInRow2 :: Sudoku -> Row -> [Value]
+freeInRow2 sudoku row = [1 .. 9] \\ filter (\s -> sudoku(row,s) /= 0) [1 .. 9]
+
+freeInRow :: Sudoku -> Row -> [Value]
+freeInRow sudoku row = [1 .. 9] \\ foldl (\l col ->
+                                       if sudoku (row,col) /= 0
+                                          then l ++ [sudoku (row,col)]
+                                       else l) [] [1 .. 9]
+
+freeInColumn :: Sudoku -> Column -> [Value]:

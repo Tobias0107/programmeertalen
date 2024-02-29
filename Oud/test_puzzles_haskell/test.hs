@@ -8,4 +8,4 @@ doubleSmallNumber x = if x > 100
                             then x
                             else x*2
 doubleSmallNumber' :: (Ord a, Num a) => a -> a
-doubleSmallNumber' x = doubleSmallNumber x + 1
+ m doubleSmallNumber' x = doubleSmallNumber x + 1
