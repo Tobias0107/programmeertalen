@@ -63,10 +63,9 @@ main =
 freeInRow2 :: Sudoku -> Row -> [Value]
 freeInRow2 sudoku row = [1 .. 9] \\ filter (\s -> sudoku(row,s) /= 0) [1 .. 9]
 
-freeInRow :: Sudoku -> Row -> [Value]
-freeInRow sudoku row = [1 .. 9] \\ foldl (\l col ->
-                                       if sudoku (row,col) /= 0
-                                          then l ++ [sudoku (row,col)]
-                                       else l) [] [1 .. 9]
 
-freeInColumn :: Sudoku -> Column -> [Value]:
+
+freeInRow :: Sudoku -> Row -> [Value]
+freeInRow sudoku row = [1 .. 9] \\ [sudoku (row, x) | x <- [1 .. 9], sudoku (row, x) /= 0]
+
+-- freeInColumn :: Sudoku -> Column -> [Value]:
