@@ -1,7 +1,6 @@
 import System.Environment
 import Data.List
 import Distribution.Simple.Program.HcPkg (list)
-import qualified Control.Applicative as yet
 
 type Row = Int
 type Column = Int
