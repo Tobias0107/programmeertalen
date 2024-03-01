@@ -76,7 +76,6 @@ freeInColumn sudoku col = [1 .. 9] \\ [sudoku (x, col) | x <- [1 .. 9],
 -}
 freeInSubgrid :: Sudoku -> (Row, Column) -> [Value]
 freeInSubgrid sudoku (row, col) = [1 .. 9] \\ [sudoku (x, y) |
-
    x <- [startrow .. endrow], y <- [startcol .. endcol], sudoku (x, y) /= 0]
       where startrow = sum (
                map (\x -> if row `elem` x then head x else 0) blocks)
