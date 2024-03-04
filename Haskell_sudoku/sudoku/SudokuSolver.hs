@@ -160,5 +160,20 @@ sortConstraints (row, col, list) (row2, col2, list2)
 constraints :: Sudoku -> [Constraint]
 constraints sud = sortBy sortConstraints (constraintsRec sud [] [])
 
+findValue :: Sudoku -> [Constraint] -> Value
+findValue sud [] = 0
+findValue sud (row, col, x:xs)
+  | solveSudokuRec (extend sud (row, col, x)) == (sud,False) = findValue sud (row, col, xs)
+  | solveSudokuRec (extend sud (row, col, x)) == (sud,True) = x
+
+solveSudokuRec :: (Sudoku,Bool) -> (Sudoku,Bool)
+solveSudokuRec (sud,bool)
+   | consistent sud = (sud,True)
+   | constraints sud == [] = (sud,False)
+   | findValue sud (constraints sud) == 0 = (sud,False)
+   | solveSudokuRec (extend sud (row, col, (findValue sud (constraints sud))))
+
 solveSudoku :: Sudoku -> Sudoku
-solveSudoku = 
+solveSudoku sud
+  | solveSudokuRec (sud,False) == (x,False) = error
+  | solveSudokuRec (sud,False) == (x,True) = x
