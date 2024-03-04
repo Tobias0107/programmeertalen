@@ -159,3 +159,6 @@ sortConstraints (row, col, list) (row2, col2, list2)
 
 constraints :: Sudoku -> [Constraint]
 constraints sud = sortBy sortConstraints (constraintsRec sud [] [])
+
+solveSudoku :: Sudoku -> Sudoku
+solveSudoku = 
