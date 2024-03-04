@@ -57,7 +57,7 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       print$freeInSubgrid sud (7,7)
+       print$freeAtPos sud (9,9)
        printSudoku sud
 
 freeInRow :: Sudoku -> Row -> [Value]
@@ -82,4 +82,9 @@ freeInSubgrid sudoku (row, col) = [1 .. 9] \\ [sudoku (x, y) |
             startcol = sum (
                map (\x -> if col `elem` x then head x else 0) blocks)
             endcol = startcol + 2
+
+freeAtPos :: Sudoku -> (Row,Column) -> [Value]
+freeAtPos sud (row,col) = if sud (row, col) == 0 then
+   freeInSubgrid sud (row, col) `intersect` freeInRow sud row `intersect` freeInColumn sud col
+   else []
 
