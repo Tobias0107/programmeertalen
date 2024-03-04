@@ -59,7 +59,7 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       print$consistent sud
+       print$constraints sud
        printSudoku sud
 
 freeInRow :: Sudoku -> Row -> [Value]
@@ -95,7 +95,7 @@ openPositionsRec :: Sudoku -> [(Int, Int)] -> [(Row,Column)] -> [(Row,Column)]
 openPositionsRec sud [] [] = if sud (1,1) == 0 then openPositionsRec
    sud [(1,1)] [(1,1)] else openPositionsRec sud [(1,1)] []
 openPositionsRec sud [(x,9)] y = if x + 1 < 10 then openPositionsRec
-   sud [(x+1,1)] y else y
+   sud [(x+1,0)] y else y
 openPositionsRec sud [(x,y)] z = if sud (x,y+1) == 0 then openPositionsRec
    sud [(x,y+1)] ((x,y+1):z) else openPositionsRec sud [(x,y+1)] z
 
@@ -142,5 +142,20 @@ consistent sud
 printNode :: Node -> IO()
 printNode = printSudoku . fst
 
+constraintsRec :: Sudoku -> [(Int, Int)] -> [Constraint] -> [Constraint]
+constraintsRec sud [] [] = if sud (1,1) == 0 then
+   constraintsRec sud [(1,1)] [(1, 1, freeAtPos sud (1,1))]
+   else constraintsRec sud [(1,1)] []
+constraintsRec sud [(x,9)] y = if x + 1 < 10 then constraintsRec
+   sud [(x+1,0)] y else y
+constraintsRec sud [(x,y)] z = if sud (x,y+1) == 0 then
+   constraintsRec sud [(x,y+1)] ((x, y+1, freeAtPos sud (x,y+1)):z)
+   else constraintsRec sud [(x,y+1)] z
+
+sortConstraints :: (Row, Column, [Value]) -> (Row, Column, [Value]) -> Ordering
+sortConstraints (row, col, list) (row2, col2, list2)
+   | length list > length list2 = GT
+   | otherwise = LT
+
 constraints :: Sudoku -> [Constraint]
-constraints = 
+constraints sud = sortBy sortConstraints (constraintsRec sud [] [])
