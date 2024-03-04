@@ -57,7 +57,7 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       print$freeAtPos sud (9,9)
+       print$openPositions sud
        printSudoku sud
 
 freeInRow :: Sudoku -> Row -> [Value]
@@ -85,6 +85,17 @@ freeInSubgrid sudoku (row, col) = [1 .. 9] \\ [sudoku (x, y) |
 
 freeAtPos :: Sudoku -> (Row,Column) -> [Value]
 freeAtPos sud (row,col) = if sud (row, col) == 0 then
-   freeInSubgrid sud (row, col) `intersect` freeInRow sud row `intersect` freeInColumn sud col
+   freeInSubgrid sud (row, col) `intersect` freeInRow sud row
+   `intersect` freeInColumn sud col
    else []
 
+openPositionsRec :: Sudoku -> [(Int, Int)] -> [(Row,Column)] -> [(Row,Column)]
+openPositionsRec sud [] [] = if sud (1,1) == 0 then openPositionsRec
+   sud [(1,1)] [(1,1)] else openPositionsRec sud [(1,1)] []
+openPositionsRec sud [(x,9)] y = if x + 1 < 10 then openPositionsRec
+   sud [(x+1,1)] y else y
+openPositionsRec sud [(x,y)] z = if sud (x,y+1) == 0 then openPositionsRec
+   sud [(x,y+1)] ((x,y+1):z) else openPositionsRec sud [(x,y+1)] z
+
+openPositions :: Sudoku -> [(Row,Column)]
+openPositions sud = openPositionsRec sud [] []
