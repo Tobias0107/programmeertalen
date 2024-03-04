@@ -59,7 +59,7 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       print$subgridValid sud (2,2)
+       print$consistent sud
        printSudoku sud
 
 freeInRow :: Sudoku -> Row -> [Value]
@@ -131,3 +131,16 @@ subgridValid sud (row, col)
             startcol = sum (
                map (\x -> if col `elem` x then head x else 0) blocks)
             endcol = startcol + 2
+
+consistent :: Sudoku -> Bool
+consistent sud
+  | length (filter (rowValid sud) [1..9]) /= 9 = False
+  | length (filter (colValid sud) [1..9]) /= 9 = False
+  | length (filter (subgridValid sud) [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
+  | otherwise = True
+
+printNode :: Node -> IO()
+printNode = printSudoku . fst
+
+constraints :: Sudoku -> [Constraint]
+constraints = 
