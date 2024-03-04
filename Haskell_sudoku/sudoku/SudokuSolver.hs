@@ -1,3 +1,5 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Redundant bracket" #-}
 import System.Environment
 import Data.List
 import Distribution.Simple.Program.HcPkg (list)
@@ -28,7 +30,7 @@ sud2grid s = [[s (r, c) | c <- positions] | r <- positions]
 grid2sud :: Grid -> Sudoku
 grid2sud gr = \(r, c) -> pos gr (r, c)
   where pos :: [[a]] -> (Row,Column) -> a
-        pos gr (r, c) = (gr !! (r - 1)) !! (c - 1)
+        pos gr (r, c) = gr !! (r - 1) !! (c - 1)
 
 -- Extends a sudoku with a value at (row, column).
 extend :: Sudoku -> (Row, Column, Value) -> Sudoku
@@ -57,7 +59,7 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       print$openPositions sud
+       print$subgridValid sud (2,2)
        printSudoku sud
 
 freeInRow :: Sudoku -> Row -> [Value]
@@ -99,3 +101,33 @@ openPositionsRec sud [(x,y)] z = if sud (x,y+1) == 0 then openPositionsRec
 
 openPositions :: Sudoku -> [(Row,Column)]
 openPositions sud = openPositionsRec sud [] []
+
+removeDuplicates :: Eq a => [a] -> [a]
+removeDuplicates [] = []
+removeDuplicates (x:xs) = x:removeDuplicates (filter (/= x) xs)
+
+rowValid :: Sudoku -> Int -> Bool
+rowValid sud row
+  | freeInRow sud row /= [] = False
+  | length (removeDuplicates [sud (row, x) | x <- [1 .. 9]]) /= 9 = False
+  | otherwise = True
+
+colValid :: Sudoku -> Column -> Bool
+colValid sud col
+  | freeInColumn sud col /= [] = False
+  | length (removeDuplicates [sud (x, col) | x <- [1 .. 9]]) /= 9 = False
+  | otherwise = True
+
+subgridValid :: Sudoku -> (Row,Column) -> Bool
+subgridValid sud (row, col)
+  | freeInSubgrid sud (row, col) /= [] = False
+  | length (removeDuplicates [sud (x, y) |
+      x <- [startrow .. endrow], y <- [startcol .. endcol], sud (x, y) /= 0])
+      /= 9 = False
+  | otherwise = True
+      where startrow = sum (
+               map (\x -> if row `elem` x then head x else 0) blocks)
+            endrow = startrow + 2
+            startcol = sum (
+               map (\x -> if col `elem` x then head x else 0) blocks)
+            endcol = startcol + 2
