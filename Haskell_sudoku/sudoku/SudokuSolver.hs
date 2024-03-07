@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Redundant bracket" #-}
+{-# HLINT ignore "Move filter" #-}
 import System.Environment
 import Data.List
 import Distribution.Simple.Program.HcPkg (list)
@@ -59,8 +59,10 @@ main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       print$constraints sud
        printSudoku sud
+       let s = solveSudoku sud
+       print("\n \n")
+       printSudoku s
 
 freeInRow :: Sudoku -> Row -> [Value]
 freeInRow sudoku row = [1 .. 9] \\ [sudoku (row, x) | x <- [1 .. 9],
@@ -160,20 +162,12 @@ sortConstraints (row, col, list) (row2, col2, list2)
 constraints :: Sudoku -> [Constraint]
 constraints sud = sortBy sortConstraints (constraintsRec sud [] [])
 
-findValue :: Sudoku -> [Constraint] -> Value
-findValue sud [] = 0
-findValue sud (row, col, x:xs)
-  | solveSudokuRec (extend sud (row, col, x)) == (sud,False) = findValue sud (row, col, xs)
-  | solveSudokuRec (extend sud (row, col, x)) == (sud,True) = x
-
-solveSudokuRec :: (Sudoku,Bool) -> (Sudoku,Bool)
-solveSudokuRec (sud,bool)
-   | consistent sud = (sud,True)
-   | constraints sud == [] = (sud,False)
-   | findValue sud (constraints sud) == 0 = (sud,False)
-   | solveSudokuRec (extend sud (row, col, (findValue sud (constraints sud))))
-
 solveSudoku :: Sudoku -> Sudoku
 solveSudoku sud
-  | solveSudokuRec (sud,False) == (x,False) = error
-  | solveSudokuRec (sud,False) == (x,True) = x
+  | null (constraints sud) = sud
+  | consistent sud = sud
+  | otherwise = head (filter consistent (map (\x-> solveSudoku (extend sud (row, col, x))) list))
+      where
+         (row, col, list) = head(constraints sud)
+
+
