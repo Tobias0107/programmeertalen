@@ -143,7 +143,7 @@ consistent bool sud
 
 nrcconsistent :: Sudoku -> Bool
 nrcconsistent sud = length (filter (nrcValid sud) [(x,y)|
-   x<-nrcCenterBlocks, y<-nrcCenterBlocks]) == 9
+   x<-nrcCenterBlocks, y<-nrcCenterBlocks]) == 4
 
 printNode :: Node -> IO()
 printNode = printSudoku . fst
@@ -181,7 +181,9 @@ normalSolver sud = if consistent False s  then s else error "no_solution"
       s = sudokuSolve sud False
 
 nrcSolver :: Sudoku -> Sudoku
-nrcSolver = normalSolver
+nrcSolver sud = if consistent True s  then s else error "no_solution"
+   where
+      s = sudokuSolve sud True
 
 getSolver :: [String] -> Solver
 getSolver (_:"nrc":_) = nrcSolver
@@ -206,5 +208,8 @@ main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
        let solver = getSolver args
+      --  print$consistent True sud
+      --  let (row, col, list) = head(constraints sud)
+      --  printSudoku$head(filter (consistent True) (map (\x-> sudokuSolve (extend sud (row, col, x)) True) list))
        let s = solver sud
        printSudoku s
