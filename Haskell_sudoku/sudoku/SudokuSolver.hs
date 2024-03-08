@@ -55,14 +55,6 @@ getSudokuName :: [String] -> String
 getSudokuName [] = error "Filename of sudoku as first argument."
 getSudokuName (x:_) = x
 
-main :: IO ()
-main =
-    do args <- getArgs
-       sud <- (readSudoku . getSudokuName) args
-       printSudoku sud
-       let s = solveSudoku sud
-       print("\n \n")
-       printSudoku s
 
 freeInRow :: Sudoku -> Row -> [Value]
 freeInRow sudoku row = [1 .. 9] \\ [sudoku (row, x) | x <- [1 .. 9],
@@ -162,12 +154,24 @@ sortConstraints (row, col, list) (row2, col2, list2)
 constraints :: Sudoku -> [Constraint]
 constraints sud = sortBy sortConstraints (constraintsRec sud [] [])
 
-solveSudoku :: Sudoku -> Sudoku
-solveSudoku sud
+sudokuSolve :: Sudoku -> Sudoku
+sudokuSolve sud
   | null (constraints sud) = sud
   | consistent sud = sud
-  | otherwise = head (filter consistent (map (\x-> solveSudoku (extend sud (row, col, x))) list))
+  | otherwise = head (if null solution then [sud] else solution)
       where
          (row, col, list) = head(constraints sud)
+         solution = filter consistent (map (\x-> sudokuSolve (extend sud (row, col, x))) list)
 
 
+solveSudoku :: Sudoku -> Sudoku
+solveSudoku sud = if consistent s  then s else error "no_solution"
+   where
+      s = sudokuSolve sud
+
+main :: IO ()
+main =
+    do args <- getArgs
+       sud <- (readSudoku . getSudokuName) args
+       let s = solveSudoku sud
+       printSudoku s
