@@ -9,6 +9,7 @@ type Column = Int
 type Value = Int
 type Grid = [[Value]] -- Only used to read/write from/to a file.
 type Sudoku = (Row,Column) -> Value
+type Solver = Sudoku -> Sudoku
 type Constraint = (Row, Column, [Value])
 type Node = (Sudoku, [Constraint])
 
@@ -21,8 +22,14 @@ values = [1..9]
 blocks :: [[Int]]
 blocks = [[1..3],[4..6],[7..9]]
 
+nrcblocks :: [[Int]]
+nrcblocks = [[2..4],[6..8]]
+
 centerOfBlocks :: [Int]
 centerOfBlocks = [2, 5, 8]
+
+nrcCenterBlocks :: [Int]
+nrcCenterBlocks = [3, 7]
 
 sud2grid :: Sudoku -> Grid
 sud2grid s = [[s (r, c) | c <- positions] | r <- positions]
@@ -54,7 +61,6 @@ printSudoku = putStr . unlines . map (unwords . map show) . sud2grid
 getSudokuName :: [String] -> String
 getSudokuName [] = error "Filename of sudoku as first argument."
 getSudokuName (x:_) = x
-
 
 freeInRow :: Sudoku -> Row -> [Value]
 freeInRow sudoku row = [1 .. 9] \\ [sudoku (row, x) | x <- [1 .. 9],
@@ -126,12 +132,18 @@ subgridValid sud (row, col)
                map (\x -> if col `elem` x then head x else 0) blocks)
             endcol = startcol + 2
 
-consistent :: Sudoku -> Bool
-consistent sud
+consistent :: Bool -> Sudoku -> Bool
+consistent bool sud
   | length (filter (rowValid sud) [1..9]) /= 9 = False
   | length (filter (colValid sud) [1..9]) /= 9 = False
-  | length (filter (subgridValid sud) [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
+  | length (filter (subgridValid sud)
+      [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
+  | bool && not (nrcconsistent sud) = False
   | otherwise = True
+
+nrcconsistent :: Sudoku -> Bool
+nrcconsistent sud = length (filter (nrcValid sud) [(x,y)|
+   x<-nrcCenterBlocks, y<-nrcCenterBlocks]) == 9
 
 printNode :: Node -> IO()
 printNode = printSudoku . fst
@@ -154,24 +166,45 @@ sortConstraints (row, col, list) (row2, col2, list2)
 constraints :: Sudoku -> [Constraint]
 constraints sud = sortBy sortConstraints (constraintsRec sud [] [])
 
-sudokuSolve :: Sudoku -> Sudoku
-sudokuSolve sud
+sudokuSolve :: Sudoku -> Bool -> Sudoku
+sudokuSolve sud bool
   | null (constraints sud) = sud
-  | consistent sud = sud
+  | consistent bool sud = sud
   | otherwise = head (if null solution then [sud] else solution)
       where
          (row, col, list) = head(constraints sud)
-         solution = filter consistent (map (\x-> sudokuSolve (extend sud (row, col, x))) list)
+         solution = filter (consistent bool) (map (\x-> sudokuSolve (extend sud (row, col, x)) bool) list)
 
-
-solveSudoku :: Sudoku -> Sudoku
-solveSudoku sud = if consistent s  then s else error "no_solution"
+normalSolver :: Sudoku -> Sudoku
+normalSolver sud = if consistent False s  then s else error "no_solution"
    where
-      s = sudokuSolve sud
+      s = sudokuSolve sud False
+
+nrcSolver :: Sudoku -> Sudoku
+nrcSolver = normalSolver
+
+getSolver :: [String] -> Solver
+getSolver (_:"nrc":_) = nrcSolver
+getSolver _ = normalSolver
+
+nrcValid :: Sudoku -> (Row,Column) -> Bool
+nrcValid sud (row, col)
+  | length (removeDuplicates [sud (x, y) |
+      x <- [startrow .. endrow], y <- [startcol .. endcol], sud (x, y) /= 0])
+      /= 9 = False
+  | otherwise = True
+      where startrow = sum (
+               map (\x -> if row `elem` x then head x else 0) nrcblocks)
+            endrow = startrow + 2
+            startcol = sum (
+               map (\x -> if col `elem` x then head x else 0) nrcblocks)
+            endcol = startcol + 2
+
 
 main :: IO ()
 main =
     do args <- getArgs
        sud <- (readSudoku . getSudokuName) args
-       let s = solveSudoku sud
+       let solver = getSolver args
+       let s = solver sud
        printSudoku s
