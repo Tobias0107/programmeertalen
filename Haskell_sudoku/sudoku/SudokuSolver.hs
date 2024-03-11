@@ -30,7 +30,7 @@ centerOfBlocks :: [Int]
 centerOfBlocks = [2, 5, 8]
 
 nrcCenterBlocks :: [Int]
-nrcCenterBlocks = [3, 7]
+nrcCenterBlocks = [2, 6]
 
 sud2grid :: Sudoku -> Grid
 sud2grid s = [[s (r, c) | c <- positions] | r <- positions]
@@ -137,19 +137,33 @@ consistent :: Bool -> Sudoku -> Bool
 consistent bool sud
   | length (filter (rowValid sud) [1..9]) /= 9 = False
   | length (filter (colValid sud) [1..9]) /= 9 = False
---   | length (filter (subgridValid sud)
---       [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
-  | bool && not (nrcconsistent sud) = False
+  | length (filter (subgridValid sud)
+      [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
+  | bool && length (filter (nrcValid sud)
+      [(x,y)|x<-nrcCenterBlocks, y<-nrcCenterBlocks]) /= 4 = False
   | otherwise = True
 
-
-blockConsistent :: Sudoku -> Int -> Int -> Bool
-blockConsistent sud start start2 = length (removeDuplicates ([sud(x,y) |
-   x <- [start..start+2], y <- [start2..start2+2], sud (x,y) /= 0])) == 9
-
-nrcconsistent :: Sudoku -> Bool
-nrcconsistent sud = blockConsistent sud 2 2 && blockConsistent sud 2 6
-   && blockConsistent sud 6 2 && blockConsistent sud 6 6
+{-This function works, but is slow i guess, since it works when there are less
+  zero's. But when there are more zero's it will take some time, and at some
+  point it takes so much time i don´t wait for it anymore. It is strange since
+  I do exactly the same in this check as in subgridValid checks, and they
+  should be executed the exact same time, but subgridValid takes a lot less
+  time with a lot of zero's.
+  This function checks if given a sudoku, row and column if for the row and
+  column in the sudoku if the nrc grid that has that row and column is valid.
+  The function returns True if valid, False if invalid. -}
+nrcValid :: Sudoku -> (Row,Column) -> Bool
+nrcValid sud (row, col)
+  | length (removeDuplicates [sud (x, y) |
+      x <- [startrow .. endrow], y <- [startcol .. endcol], sud (x, y) /= 0])
+      /= 9 = False
+  | otherwise = True
+      where startrow = sum (
+               map (\x -> if row `elem` x then head x else 0) nrcblocks)
+            endrow = startrow + 2
+            startcol = sum (
+               map (\x -> if col `elem` x then head x else 0) nrcblocks)
+            endcol = startcol + 2
 
 printNode :: Node -> IO()
 printNode = printSudoku . fst
@@ -195,23 +209,6 @@ getSolver :: [String] -> Solver
 getSolver (_:"nrc":_) = nrcSolver
 getSolver _ = normalSolver
 
--- nrcValid :: Sudoku -> (Row,Column) -> Bool
--- nrcValid sud (row, col)
---   | length (removeDuplicates [sud (x, y) |
---       x <- [startrow .. endrow], y <- [startcol .. endcol], sud (x, y) /= 0])
---       /= 9 = False
---   | otherwise = True
---       where startrow = sum (
---                map (\x -> if row `elem` x then head x else 0) nrcblocks)
---             endrow = startrow + 2
---             startcol = sum (
---                map (\x -> if col `elem` x then head x else 0) nrcblocks)
---             endcol = startcol + 2
-
--- nrcconsistent :: Sudoku -> Bool
--- nrcconsistent sud = length (filter (nrcValid sud) [(x,y)|
---    x<-nrcCenterBlocks, y<-nrcCenterBlocks]) == 4
-
 main :: IO ()
 main =
     do args <- getArgs
@@ -221,6 +218,7 @@ main =
       --  let (row, col, list) = head(constraints sud)
       --  printSudoku$head(filter (consistent True) (map (\x-> sudokuSolve (extend sud (row, col, x)) True) list))
        let s = solver sud
-      --  print$nrcconsistent sud
-      --  print$blockConsistent sud 2 4
+      --  print$consistent True sud
+      --  print$filter (nrcValid sud) [(x,y) | x<-nrcCenterBlocks, y<-nrcCenterBlocks]
+      --  print$blockConsistent sud (6,2)
        printSudoku s
