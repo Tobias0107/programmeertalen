@@ -1,5 +1,6 @@
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Move filter" #-}
+{-# HLINT ignore "Redundant bracket" #-}
 import System.Environment
 import Data.List
 import Distribution.Simple.Program.HcPkg (list)
@@ -136,14 +137,19 @@ consistent :: Bool -> Sudoku -> Bool
 consistent bool sud
   | length (filter (rowValid sud) [1..9]) /= 9 = False
   | length (filter (colValid sud) [1..9]) /= 9 = False
-  | length (filter (subgridValid sud)
-      [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
+--   | length (filter (subgridValid sud)
+--       [(x,y)|x<-centerOfBlocks, y<-centerOfBlocks]) /= 9 = False
   | bool && not (nrcconsistent sud) = False
   | otherwise = True
 
+
+blockConsistent :: Sudoku -> Int -> Int -> Bool
+blockConsistent sud start start2 = length (removeDuplicates ([sud(x,y) |
+   x <- [start..start+2], y <- [start2..start2+2], sud (x,y) /= 0])) == 9
+
 nrcconsistent :: Sudoku -> Bool
-nrcconsistent sud = length (filter (nrcValid sud) [(x,y)|
-   x<-nrcCenterBlocks, y<-nrcCenterBlocks]) == 4
+nrcconsistent sud = blockConsistent sud 2 2 && blockConsistent sud 2 6
+   && blockConsistent sud 6 2 && blockConsistent sud 6 6
 
 printNode :: Node -> IO()
 printNode = printSudoku . fst
@@ -189,19 +195,22 @@ getSolver :: [String] -> Solver
 getSolver (_:"nrc":_) = nrcSolver
 getSolver _ = normalSolver
 
-nrcValid :: Sudoku -> (Row,Column) -> Bool
-nrcValid sud (row, col)
-  | length (removeDuplicates [sud (x, y) |
-      x <- [startrow .. endrow], y <- [startcol .. endcol], sud (x, y) /= 0])
-      /= 9 = False
-  | otherwise = True
-      where startrow = sum (
-               map (\x -> if row `elem` x then head x else 0) nrcblocks)
-            endrow = startrow + 2
-            startcol = sum (
-               map (\x -> if col `elem` x then head x else 0) nrcblocks)
-            endcol = startcol + 2
+-- nrcValid :: Sudoku -> (Row,Column) -> Bool
+-- nrcValid sud (row, col)
+--   | length (removeDuplicates [sud (x, y) |
+--       x <- [startrow .. endrow], y <- [startcol .. endcol], sud (x, y) /= 0])
+--       /= 9 = False
+--   | otherwise = True
+--       where startrow = sum (
+--                map (\x -> if row `elem` x then head x else 0) nrcblocks)
+--             endrow = startrow + 2
+--             startcol = sum (
+--                map (\x -> if col `elem` x then head x else 0) nrcblocks)
+--             endcol = startcol + 2
 
+-- nrcconsistent :: Sudoku -> Bool
+-- nrcconsistent sud = length (filter (nrcValid sud) [(x,y)|
+--    x<-nrcCenterBlocks, y<-nrcCenterBlocks]) == 4
 
 main :: IO ()
 main =
@@ -212,4 +221,6 @@ main =
       --  let (row, col, list) = head(constraints sud)
       --  printSudoku$head(filter (consistent True) (map (\x-> sudokuSolve (extend sud (row, col, x)) True) list))
        let s = solver sud
+      --  print$nrcconsistent sud
+      --  print$blockConsistent sud 2 4
        printSudoku s
