@@ -1,0 +1,7 @@
+c(grid).
+Grid = grid:new(3, 3).
+Grid2 = grid:add_wall(grid:get_wall(1, 0, west), Grid).
+Grid3 = grid:add_wall(grid:get_wall(0, 1, east), Grid2).
+Grid4 = grid:add_wall(grid:get_wall(1, 0, south), Grid3).
+Grid5 = grid:add_wall(grid:get_wall(0, 1, north), Grid4).
+grid:print(Grid5).
