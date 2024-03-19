@@ -1,5 +1,5 @@
 -module(grid).
--export([choose_random_wall/1, get_open_spots/1, show_hlines/2, show_vlines/2, print/1, new/2, get_wall/3, has_wall/2, add_wall/2, get_cell_walls/2, get_all_walls/2, remove_duplicates/1]).
+-export([choose_random_wall/1, get_open_spots/1, show_hlines/2, show_vlines/2, print/1, new/2, get_wall/3, has_wall/2, add_wall/2, get_cell_walls/2, get_all_walls/2]).
 
 new(Width, Height) -> {Width, Height, []}.
 
@@ -52,14 +52,8 @@ print(Grid) ->
     io:fwrite("~n"),
     ok.
 
-remove_duplicates([]) -> [];
-remove_duplicates([Head | Rest]) -> [Head | [X || X <- remove_duplicates(Rest), X /= Head]].
-
 get_cell_walls(X,Y) ->
     [get_wall(X,Y,north), get_wall(X,Y,south), get_wall(X,Y,east), get_wall(X,Y,west)].
-
-% get_all_walls(W,H) ->
-%     remove_duplicates([get_cell_walls(X, Y) || X <- lists:seq(0, W-1), Y <- lists:seq(0, H-1)]).
 
 get_all_walls(W,H) ->
     Set = sets:from_list(lists:concat([get_cell_walls(X, Y) || X <- lists:seq(0, W-1), Y <- lists:seq(0, H-1)])),
@@ -71,3 +65,4 @@ choose_random_wall(Grid) ->
     OpenSpots = get_open_spots(Grid),
     Index = rand:uniform(length(OpenSpots)),
     lists:nth(Index, OpenSpots).
+
