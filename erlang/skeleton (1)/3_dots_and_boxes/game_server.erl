@@ -4,6 +4,7 @@
 
 -export([start_link/1, handle_call/3, handle_cast/2]).
 -export([init/1, move/2]).
+-import(grid, [get_open_spots/1, add_wall/2, amount_boxes_wall/2]).
 
 start_link({W, H, Players}) ->
     gen_server:start_link(game_server, {W, H, Players}, []).
@@ -14,11 +15,25 @@ move(Pid, Wall) ->
 
 
 % TODO: You need to inform the first player to move.
-init({Width, Height, Players}) ->
+init({Width, Height, [FirstPlayer | RestOfPlayers]}) ->
     Grid = grid:new(Width, Height),
-    {ok, {Grid, Players}}.
+    FirstPlayer ! {move, self(), Grid},
+    {ok, {Grid, [RestOfPlayers | FirstPlayer]}}.
 
 % TODO: add handle_call for move.
+handle_call({move, MoveVanSpeler}, _From, {Grid, [NextPlayer | RestOfPlayers]}) ->
+    case lists:member(MoveVanSpeler, get_open_spots(Grid)) of
+        false -> Score = 0,
+                 NextPlayer ! {move, self(), Grid},
+                 NewGrid = Grid;
+        true -> NewGrid = add_wall(MoveVanSpeler, Grid),
+                Score = amount_boxes_wall(MoveVanSpeler, NewGrid) - amount_boxes_wall(MoveVanSpeler, Grid),
+                NextPlayer ! {move, self(), NewGrid},
+                case get_open_spots(NewGrid) == [] of
+                    true -> lists:map(fun (Pid) -> Pid ! finished, [NextPlayer | RestOfPlayers]),
+                            
+    end,
+        {reply, {ok, Score}, {NewGrid, [RestOfPlayers | NextPlayer]}};
 
 % Used for testing.
 handle_call(state, _From, State) ->

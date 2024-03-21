@@ -10,8 +10,8 @@ move() ->
             io:format("~p: I am done~n", [self()]);
         {move,ServerPid,Grid} ->
             Wall = choose_random_wall(Grid),
-            ServerPid ! {move,Wall}
-
+            gen_server:call(ServerPid, {move,Wall}),
+            move()
     end.
 
 

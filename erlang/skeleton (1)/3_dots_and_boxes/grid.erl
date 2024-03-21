@@ -1,5 +1,5 @@
 -module(grid).
--export([choose_random_wall/1, get_open_spots/1, show_hlines/2, show_vlines/2, print/1, new/2, get_wall/3, has_wall/2, add_wall/2, get_cell_walls/2, get_all_walls/2]).
+-export([boxes_at_point/2, amount_boxes_wall/2, choose_random_wall/1, get_open_spots/1, show_hlines/2, show_vlines/2, print/1, new/2, get_wall/3, has_wall/2, add_wall/2, get_cell_walls/2, get_all_walls/2]).
 
 new(Width, Height) -> {Width, Height, []}.
 
@@ -67,3 +67,11 @@ choose_random_wall(Grid) ->
         true -> [];
         false -> lists:nth(rand:uniform(length(OpenSpots)), OpenSpots)
     end.
+
+boxes_at_point({A,B}, List) ->
+    Bool = lists:member({A,B-1}, List) and lists:member({A+1,B}, List) and
+    lists:member({A-1,B}, List) and lists:member({A,B+1}, List),
+    case Bool of true -> 1; false -> 0 end.
+
+amount_boxes_wall({{A,B},{C,D}}, List) ->
+    boxes_at_point({A,B}, List) + boxes_at_point({C,D}, List).
