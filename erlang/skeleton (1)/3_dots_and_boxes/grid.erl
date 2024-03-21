@@ -63,6 +63,7 @@ get_open_spots({W,H, List}) -> get_all_walls(W, H) -- List.
 
 choose_random_wall(Grid) ->
     OpenSpots = get_open_spots(Grid),
-    Index = rand:uniform(length(OpenSpots)),
-    lists:nth(Index, OpenSpots).
-
+    case length(OpenSpots) == 0 of
+        true -> [];
+        false -> lists:nth(rand:uniform(length(OpenSpots)), OpenSpots)
+    end.
