@@ -2,7 +2,7 @@
 
 -behaviour(gen_server).
 
--export([start_link/1, handle_call/3, handle_cast/2]).
+-export([start_link/1, handle_call/3, handle_cast/2, check_program_finished/2]).
 -export([init/1, move/2]).
 -import(grid, [get_open_spots/1, add_wall/2, amount_boxes_wall/2]).
 
@@ -21,6 +21,13 @@ init({Width, Height, Players}) ->
     FirstPlayer ! {move, self(), Grid},
     {ok, {Grid, Players}}.
 
+check_program_finished(NewGrid, ListOfPlayers) ->
+    case get_open_spots(NewGrid) == [] of
+                    true -> [Pid ! finished || Pid <- ListOfPlayers],
+                        timer:sleep(timer:seconds(5)),
+                        gen_server:stop(self())
+    end.
+
 % TODO: add handle_call for move.
 handle_call({move, MoveVanSpeler}, _From, {Grid, [CurrentPlayer | RestOfPlayers]}) ->
     case length(RestOfPlayers) > 1 of true -> [NextPlayer | _ ] = RestOfPlayers;
@@ -30,15 +37,16 @@ handle_call({move, MoveVanSpeler}, _From, {Grid, [CurrentPlayer | RestOfPlayers]
                  NewGrid = Grid;
         true -> NewGrid = add_wall(MoveVanSpeler, Grid),
                 Score = amount_boxes_wall(MoveVanSpeler, NewGrid) - amount_boxes_wall(MoveVanSpeler, Grid),
-                case get_open_spots(NewGrid) == [] of
-                    true -> [Pid ! finished || Pid <- [CurrentPlayer | RestOfPlayers]],
-                            gen_server:stop(self())
-                end
+                % Score = 1,
+                file:write_file("/tmp/Debug2.txt", io_lib:fwrite("~w", [amount_boxes_wall(MoveVanSpeler, NewGrid)])),
+                spawn_link(check_program_finished(NewGrid, [CurrentPlayer | RestOfPlayers]))
     end,
+    file:write_file("/tmp/Debug3.txt", io_lib:fwrite("~w", [Score])),
     case Score == 0 of
         true -> spawn_link(fun () -> NextPlayer ! {move, self(), Grid} end),
                 {reply, {ok, Score}, {NewGrid, RestOfPlayers ++ [CurrentPlayer]}};
         false -> spawn_link(fun () -> CurrentPlayer ! {move, self(), NewGrid} end),
+                % file:write_file("/tmp/Debug3.txt", io_lib:fwrite("~w", [Score])),
                  {reply, {ok, Score}, {NewGrid, [CurrentPlayer | RestOfPlayers]}}
     end;
 

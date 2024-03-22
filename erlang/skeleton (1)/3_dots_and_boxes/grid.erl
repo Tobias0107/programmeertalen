@@ -71,6 +71,7 @@ choose_random_wall(Grid) ->
 boxes_at_point({A,B}, List) ->
     Bool = lists:member({A,B-1}, List) and lists:member({A+1,B}, List) and
     lists:member({A-1,B}, List) and lists:member({A,B+1}, List),
+    file:write_file("/tmp/Debug8.txt", io_lib:fwrite("~w", [Bool])),
     case Bool of true -> 1; false -> 0 end.
 
 amount_boxes_wall({{A,B},{C,D}}, {_, _, List}) ->
