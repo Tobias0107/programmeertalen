@@ -15,25 +15,32 @@ move(Pid, Wall) ->
 
 
 % TODO: You need to inform the first player to move.
-init({Width, Height, [FirstPlayer | RestOfPlayers]}) ->
+init({Width, Height, Players}) ->
     Grid = grid:new(Width, Height),
+    [FirstPlayer|_] = Players,
     FirstPlayer ! {move, self(), Grid},
-    {ok, {Grid, [RestOfPlayers | FirstPlayer]}}.
+    {ok, {Grid, Players}}.
 
 % TODO: add handle_call for move.
-handle_call({move, MoveVanSpeler}, _From, {Grid, [NextPlayer | RestOfPlayers]}) ->
+handle_call({move, MoveVanSpeler}, _From, {Grid, [CurrentPlayer | RestOfPlayers]}) ->
+    case length(RestOfPlayers) > 1 of true -> [NextPlayer | _ ] = RestOfPlayers;
+                                      false -> NextPlayer = CurrentPlayer end,
     case lists:member(MoveVanSpeler, get_open_spots(Grid)) of
         false -> Score = 0,
-                 NextPlayer ! {move, self(), Grid},
                  NewGrid = Grid;
         true -> NewGrid = add_wall(MoveVanSpeler, Grid),
                 Score = amount_boxes_wall(MoveVanSpeler, NewGrid) - amount_boxes_wall(MoveVanSpeler, Grid),
-                NextPlayer ! {move, self(), NewGrid},
                 case get_open_spots(NewGrid) == [] of
-                    true -> lists:map(fun (Pid) -> Pid ! finished, [NextPlayer | RestOfPlayers]),
-                            
+                    true -> [Pid ! finished || Pid <- [CurrentPlayer | RestOfPlayers]],
+                            gen_server:stop(self())
+                end
     end,
-        {reply, {ok, Score}, {NewGrid, [RestOfPlayers | NextPlayer]}};
+    case Score == 0 of
+        true -> spawn_link(fun () -> NextPlayer ! {move, self(), Grid} end),
+                {reply, {ok, Score}, {NewGrid, RestOfPlayers ++ [CurrentPlayer]}};
+        false -> spawn_link(fun () -> CurrentPlayer ! {move, self(), NewGrid} end),
+                 {reply, {ok, Score}, {NewGrid, [CurrentPlayer | RestOfPlayers]}}
+    end;
 
 % Used for testing.
 handle_call(state, _From, State) ->

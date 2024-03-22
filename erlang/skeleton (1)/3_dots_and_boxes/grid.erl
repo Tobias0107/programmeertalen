@@ -73,5 +73,5 @@ boxes_at_point({A,B}, List) ->
     lists:member({A-1,B}, List) and lists:member({A,B+1}, List),
     case Bool of true -> 1; false -> 0 end.
 
-amount_boxes_wall({{A,B},{C,D}}, List) ->
+amount_boxes_wall({{A,B},{C,D}}, {_, _, List}) ->
     boxes_at_point({A,B}, List) + boxes_at_point({C,D}, List).
